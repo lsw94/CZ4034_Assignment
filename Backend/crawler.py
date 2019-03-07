@@ -2,7 +2,7 @@ import json
 import os
 
 import requests
-
+import jsonpickle
 from Backend.Objects.Document import Document
 from Backend.Objects.DocumentList import DocumentList
 
@@ -21,8 +21,14 @@ def query_news():
         save_json(data, raw_path)
     else:
         data = load_json(raw_path)
-    documents = process_json(data)
-    # save_json(documents.__dict__, objects_path)
+
+    if os.path.exists(objects_path) and not requery:
+        documents = load_document_list(objects_path)
+    else:
+        documents = process_json(data)
+        save_json(jsonpickle.encode(documents), objects_path)
+
+    return documents
 
 
 def save_json(data, file):
@@ -34,6 +40,11 @@ def load_json(file):
     with open(file, 'r') as f:
         data = json.load(f)
     return data
+
+
+def load_document_list(file):
+    data = load_json(file)
+    return jsonpickle.decode(data)
 
 
 def check_create_folder(directory):
@@ -49,6 +60,3 @@ def process_json(data):
                             article["urlToImage"], article["publishedAt"], article["content"])
         documents.append(document)
     return documents
-
-
-query_news()

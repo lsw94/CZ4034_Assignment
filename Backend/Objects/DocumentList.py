@@ -1,5 +1,3 @@
-
-
 class DocumentList:
 
     def __init__(self):

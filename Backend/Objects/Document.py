@@ -1,5 +1,3 @@
-
-
 class Document:
 
     def __init__(self, source, title, description, url, image_url, publish_time, content):
