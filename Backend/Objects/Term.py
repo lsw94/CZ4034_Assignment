@@ -1,6 +1,11 @@
 class Term:
 
-    def __init__(self, term, document):
+    def __init__(self, term, documents, id, frequency):
+        self.id = id
         self.term = term
-        self.frequency = 1
-        self.documents = [document]
+        self.frequency = frequency
+        self.documents = documents
+
+
+
+
