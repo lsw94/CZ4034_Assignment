@@ -1,8 +1,10 @@
 import re
-import numpy as np
+
 import nltk
-from nltk.stem import WordNetLemmatizer
+import numpy as np
 from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
 from Backend.Objects.TermList import TermList
 
 stop_words = set(stopwords.words('english'))
@@ -20,6 +22,8 @@ def remove_stop_words(tokens):
     for token in tokens:
         if token not in stop_words:
             tokens_filtered.append(token)
+        else:
+            tokens_filtered.append("")
     return tokens_filtered
 
 
@@ -34,8 +38,8 @@ def lemmatize(tokens):
 
 def process_string(string):
     string = remove_non_alphanumeric_and_lowercase(string)
-    tokens = tokenize(string)
-    tokens = remove_stop_words(tokens)
+    tokens_raw = tokenize(string)
+    tokens = remove_stop_words(tokens_raw)
     terms = lemmatize(tokens)
     return terms
 
@@ -43,25 +47,28 @@ def process_string(string):
 def process_documents(documents):
     tokens = []
     for n in range(len(documents)):
-        tokens.extend(process_string(documents[n].title))
-        tokens.extend(process_string(documents[n].description))
-        tokens.extend(process_string(documents[n].content))
-        tokens.extend(process_string(documents[n].source))
-    tokens = np.asarray(tokens)
-    tokens_unique = np.unique(tokens)
+        source_tokens = process_string(documents[n].source)
+        title_tokens = process_string(documents[n].title)
+        description_tokens = process_string(documents[n].description)
+        content_tokens = process_string(documents[n].content)
 
-    tokens_unique_documents = []
+        documents[n].set_processed_strings(source_tokens, title_tokens, description_tokens,
+                                           content_tokens)
+
+        tokens.extend(source_tokens)
+        tokens.extend(title_tokens)
+        tokens.extend(description_tokens)
+        tokens.extend(content_tokens)
+
+    tokens_unique = np.unique(np.asarray(tokens))
+    tokens_unique = np.delete(tokens_unique, np.where(tokens_unique == ""))
     tokens_unique_frequency = []
     for token_unique in tokens_unique:
         indices = [i for i, token in enumerate(tokens) if token == token_unique]
-        tokens_unique_documents.append(indices)
         tokens_unique_frequency.append(len(indices))
 
     terms = TermList()
     for n, token in enumerate(tokens_unique):
-        terms.add_term(token, tokens_unique_documents[n], tokens_unique_frequency[n])
+        terms.add_term(token, tokens_unique_frequency[n])
+
     return terms
-
-
-
-

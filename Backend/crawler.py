@@ -9,14 +9,14 @@ from Backend.lemmatizer import process_documents
 
 url_everything = "https://newsapi.org/v2/everything?q=*&apiKey=a99a17c2950f4e66bcc4ad161b02f292&pageSize=100"
 data_folder = "Data"
-requery = False
 raw_path = os.path.join(data_folder, "raw.json")
 documents_path = os.path.join(data_folder, "documents.json")
+documents_processed_path = os.path.join(data_folder, "documents_processed.json")
 terms_path = os.path.join(data_folder, "terms.json")
 maximum_number_of_news = 1000
 
 
-def query_news():
+def query_news(requery):
     check_create_folder(data_folder)
     data_list = []
     if requery:
@@ -44,7 +44,14 @@ def query_news():
         terms = load_json_list(terms_path)
     else:
         terms = process_documents(documents)
+        for term in terms:
+            positional_index = documents.get_positional_index(term.term)
+            if len(positional_index) != term.frequency:
+                print("Error")
+                exit()
+            term.add_positional_index(positional_index)
         save_json(jsonpickle.encode(terms), terms_path)
+        save_json(jsonpickle.encode(documents), documents_processed_path)
 
     return documents, terms
 
@@ -79,5 +86,3 @@ def process_jsons(datas):
                                    article["urlToImage"], article["publishedAt"], article["content"])
     return documents
 
-
-query_news()

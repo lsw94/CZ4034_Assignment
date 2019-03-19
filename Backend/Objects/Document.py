@@ -3,6 +3,10 @@ class Document:
     def __init__(self, source, title, description, url, image_url, publish_time, content, id):
 
         self.id = id
+        self.source_processed = ""
+        self.title_processed = ""
+        self.description_processed = ""
+        self.content_processed = ""
 
         if source is None:
             self.source = ""
@@ -38,3 +42,21 @@ class Document:
             self.content = ""
         else:
             self.content = content
+
+    def set_processed_strings(self, source, title, description, content):
+        self.source_processed = source
+        self.title_processed = title
+        self.description_processed = description
+        self.content_processed = content
+
+    def get_positions_of_term(self, term):
+        position_source = [i for i, word in enumerate(self.source_processed) if word == term]
+        position_title = [i for i, word in enumerate(self.title_processed) if word == term]
+        position_description = [i for i, word in enumerate(self.description_processed) if word == term]
+        position_content = [i for i, word in enumerate(self.content_processed) if word == term]
+
+        return position_source, position_title, position_description, position_content
+
+    def __len__(self):
+        return len(self.source_processed) + len(self.title_processed) + len(self.description_processed) + len(
+            self.content_processed)
