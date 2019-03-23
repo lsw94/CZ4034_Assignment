@@ -54,7 +54,7 @@ ROOT_URLCONF = 'CZ4034_Assignment.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2'
+        'BACKEND': 'django.template.backends.django.DjangoTemplates'
         ,
         'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
@@ -121,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
