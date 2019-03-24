@@ -23,3 +23,34 @@ class TermList:
         for term in self.term_list:
             total = total + len(term.positional_index)
         return total
+
+    def get_term(self, search_term):
+        for term in self.term_list:
+            if len(term) > len(search_term):
+                break
+            if len(search_term) != len(term):
+                continue
+            if search_term == term.term:
+                return term
+        return None
+
+    def sort_by_term_length(self):
+        self.term_list = self.sort(self.term_list)
+
+    def sort(self, array):
+        less = []
+        equal = []
+        greater = []
+
+        if len(array) > 1:
+            pivot = array[0]
+            for x in array:
+                if len(x) < len(pivot):
+                    less.append(x)
+                elif len(x) == len(pivot):
+                    equal.append(x)
+                else:
+                    greater.append(x)
+            return self.sort(less) + equal + self.sort(greater)
+        else:
+            return array

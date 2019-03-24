@@ -30,6 +30,7 @@ class DocumentList:
                 continue
             positional_index_list.add_positional_index(
                 PositionalIndex(document.id, source_index, title_index, description_index, content_index))
+        positional_index_list.sort_by_document_id()
         return positional_index_list
 
     def get_total_number_of_terms(self):
@@ -37,3 +38,28 @@ class DocumentList:
         for document in self.document_list:
             total = total + len(document)
         return total
+
+    def get_all_source_as_token(self):
+        source_list = []
+        for document in self.document_list:
+            source_list.append(document.source_processed)
+        return source_list
+
+    def get_all_title_as_token(self):
+        title_list = []
+        for document in self.document_list:
+            title_list.append(document.title_processed)
+        return title_list
+    
+    def get_all_description_as_token(self):
+        description_list = []
+        for document in self.document_list:
+            description_list.append(document.description_processed)
+        return description_list
+
+    def get_all_content_as_token(self):
+        content_list = []
+        for document in self.document_list:
+            content_list.append(document.content_processed)
+        return content_list
+

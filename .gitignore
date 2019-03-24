@@ -35,7 +35,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit find_similar_positional_index / coverage reports
 htmlcov/
 .tox/
 .coverage

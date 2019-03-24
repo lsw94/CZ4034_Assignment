@@ -1,6 +1,6 @@
 import json
 import os
-
+import time
 import jsonpickle
 import requests
 
@@ -33,7 +33,6 @@ def query_news(requery):
                 break
             data = load_json(raw_path.replace(".json", str(n + 1) + ".json"))
             data_list.append(data)
-
     if os.path.exists(documents_path) and not requery:
         documents = load_json_list(documents_path)
     else:
@@ -46,13 +45,13 @@ def query_news(requery):
         terms = process_documents(documents)
         for term in terms:
             positional_index = documents.get_positional_index(term.term)
-            if len(positional_index) != term.frequency:
+            if positional_index.term_frequency() != term.term_frequency:
                 print("Error")
                 exit()
             term.add_positional_index(positional_index)
         save_json(jsonpickle.encode(terms), terms_path)
         save_json(jsonpickle.encode(documents), documents_processed_path)
-
+    terms.sort_by_term_length()
     return documents, terms
 
 

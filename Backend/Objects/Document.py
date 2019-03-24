@@ -60,3 +60,4 @@ class Document:
     def __len__(self):
         return len(self.source_processed) + len(self.title_processed) + len(self.description_processed) + len(
             self.content_processed)
+
