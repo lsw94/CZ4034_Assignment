@@ -8,9 +8,10 @@ from Backend.Objects.DocumentList import DocumentList
 from Backend.lemmatizer import process_documents
 
 api_keys = ["6209cba3f204447aa019713ad53decf5", "a99a17c2950f4e66bcc4ad161b02f292"]
-sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-news", "reuters", "vice-news",
-           "bloomberg", "msnbc", "daily-mail", "associated-press", "fox-news", "the-huffington-post",
-           "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
+# sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-news", "reuters", "vice-news",
+#            "bloomberg", "msnbc", "daily-mail", "associated-press", "fox-news", "the-huffington-post",
+#            "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
+sources = ["the-economist", "bbc-news", "al-jazeera-english"]
 url_everything = "https://newsapi.org/v2/everything?pageSize=100&apiKey=a99a17c2950f4e66bcc4ad161b02f292&sources="
 data_folder = "Data"
 raw_path = os.path.join(data_folder, "raw.json")
