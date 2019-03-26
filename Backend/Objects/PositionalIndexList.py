@@ -1,3 +1,6 @@
+
+
+
 class PositionalIndexList:
 
     def __init__(self):
@@ -33,7 +36,8 @@ class PositionalIndexList:
         return None
 
     def sort_by_document_id(self):
-        self.positional_index_list = self.sort(self.positional_index_list)
+        self.positional_index_list.sort(key=lambda x: x.document)
+        # self.positional_index_list = self.sort(self.positional_index_list)
 
     def get_document_id_list(self):
         doc_id_list = []
@@ -48,23 +52,4 @@ class PositionalIndexList:
             if doc == pi:
                 return True
         return False
-
-    def sort(self, array):
-        less = []
-        equal = []
-        greater = []
-
-        if len(array) > 1:
-            pivot = array[0]
-            for x in array:
-                if x.document < pivot.document:
-                    less.append(x)
-                elif x.document == pivot.document:
-                    equal.append(x)
-                else:
-                    greater.append(x)
-            return self.sort(less) + equal + self.sort(greater)
-        else:
-            return array
-
 

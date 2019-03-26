@@ -9,8 +9,8 @@ class TermList:
     def __len__(self):
         return len(self.term_list)
 
-    def add_term(self, word, frequency):
-        self.term_list.append(Term(word, len(self.term_list), frequency))
+    def add_term(self, word):
+        self.term_list.append(Term(word, len(self.term_list)))
 
     def __getitem__(self, item):
         if isinstance(item, slice):
@@ -35,22 +35,23 @@ class TermList:
         return None
 
     def sort_by_term_length(self):
-        self.term_list = self.sort(self.term_list)
+        self.term_list.sort(key=lambda x: len(x))
+        # self.term_list = self.sort(self.term_list)
 
-    def sort(self, array):
-        less = []
-        equal = []
-        greater = []
-
-        if len(array) > 1:
-            pivot = array[0]
-            for x in array:
-                if len(x) < len(pivot):
-                    less.append(x)
-                elif len(x) == len(pivot):
-                    equal.append(x)
-                else:
-                    greater.append(x)
-            return self.sort(less) + equal + self.sort(greater)
-        else:
-            return array
+    # def sort(self, array):
+    #     less = []
+    #     equal = []
+    #     greater = []
+    #
+    #     if len(array) > 1:
+    #         pivot = array[0]
+    #         for x in array:
+    #             if len(x) < len(pivot):
+    #                 less.append(x)
+    #             elif len(x) == len(pivot):
+    #                 equal.append(x)
+    #             else:
+    #                 greater.append(x)
+    #         return self.sort(less) + equal + self.sort(greater)
+    #     else:
+    #         return array

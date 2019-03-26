@@ -7,6 +7,11 @@ class Document:
         self.title_processed = ""
         self.description_processed = ""
         self.content_processed = ""
+        self.source_set = None
+        self.title_set = None
+        self.description_set = None
+        self.content_set = None
+        self.document_tfidf_score = []
 
         if source is None:
             self.source = ""
@@ -48,12 +53,24 @@ class Document:
         self.title_processed = title
         self.description_processed = description
         self.content_processed = content
+        self.source_set = set(self.source_processed)
+        self.title_set = set(self.title_processed)
+        self.description_set = set(self.description_processed)
+        self.content_set = set(self.content_processed)
 
     def get_positions_of_term(self, term):
-        position_source = [i for i, word in enumerate(self.source_processed) if word == term]
-        position_title = [i for i, word in enumerate(self.title_processed) if word == term]
-        position_description = [i for i, word in enumerate(self.description_processed) if word == term]
-        position_content = [i for i, word in enumerate(self.content_processed) if word == term]
+        position_source = []
+        position_title = []
+        position_description = []
+        position_content = []
+        if term in self.source_set:
+            position_source = [i for i, word in enumerate(self.source_processed) if word == term]
+        if term in self.title_set:
+            position_title = [i for i, word in enumerate(self.title_processed) if word == term]
+        if term in self.description_set:
+            position_description = [i for i, word in enumerate(self.description_processed) if word == term]
+        if term in self.content_set:
+            position_content = [i for i, word in enumerate(self.content_processed) if word == term]
 
         return position_source, position_title, position_description, position_content
 
@@ -61,3 +78,8 @@ class Document:
         return len(self.source_processed) + len(self.title_processed) + len(self.description_processed) + len(
             self.content_processed)
 
+    def set_document_tfidf_score(self, document_tfidf_score):
+        self.document_tfidf_score = document_tfidf_score
+
+    def get_document_tfidf_score(self):
+        return self.document_tfidf_score

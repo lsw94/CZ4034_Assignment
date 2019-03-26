@@ -5,9 +5,13 @@ class TermDocumentSimilarity:
 
     def __init__(self, terms):
         self.terms = terms
-        self.similar_document_ids = self.find_similar_positional_index()
-        self.similar_document_in_order = []
-        self.find_if_term_in_order()
+        if len(self.terms) == 1:
+            self.similar_document_ids = self.terms[0].positional_indexes.get_document_id_list()
+            self.similar_document_in_order = [True] * len(self.similar_document_ids)
+        else:
+            self.similar_document_ids = self.find_similar_positional_index()
+            self.similar_document_in_order = []
+            self.find_if_term_in_order()
 
     def find_similar_positional_index(self):
         positional_index_list = []

@@ -1,6 +1,6 @@
 from Backend.Objects.Document import Document
-from Backend.Objects.PositionalIndexList import PositionalIndexList
 from Backend.Objects.PositionalIndex import PositionalIndex
+from Backend.Objects.PositionalIndexList import PositionalIndexList
 
 
 class DocumentList:
@@ -26,12 +26,20 @@ class DocumentList:
         positional_index_list = PositionalIndexList()
         for document in self.document_list:
             source_index, title_index, description_index, content_index = document.get_positions_of_term(term)
-            if len(source_index) == 0 and len(title_index) == 0 and len(description_index) == 0 and len(content_index) == 0:
+            if len(source_index) == 0 and len(title_index) == 0 and len(description_index) == 0 and len(
+                    content_index) == 0:
                 continue
             positional_index_list.add_positional_index(
                 PositionalIndex(document.id, source_index, title_index, description_index, content_index))
         positional_index_list.sort_by_document_id()
         return positional_index_list
+
+    def get_document(self, id):
+        for doc in self.document_list:
+            if doc.id > id:
+                break
+            if doc.id == id:
+                return doc
 
     def get_total_number_of_terms(self):
         total = 0
@@ -50,7 +58,7 @@ class DocumentList:
         for document in self.document_list:
             title_list.append(document.title_processed)
         return title_list
-    
+
     def get_all_description_as_token(self):
         description_list = []
         for document in self.document_list:
@@ -62,4 +70,3 @@ class DocumentList:
         for document in self.document_list:
             content_list.append(document.content_processed)
         return content_list
-

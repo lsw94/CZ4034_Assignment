@@ -62,13 +62,13 @@ def process_documents(documents):
 
     tokens_unique = np.unique(np.asarray(tokens))
     tokens_unique = np.delete(tokens_unique, np.where(tokens_unique == ""))
-    tokens_unique_frequency = []
-    for token_unique in tokens_unique:
-        indices = [i for i, token in enumerate(tokens) if token == token_unique]
-        tokens_unique_frequency.append(len(indices))
+    # tokens_unique_frequency = []
+    # for token_unique in tokens_unique:
+    #     indices = [i for i, token in enumerate(tokens) if token == token_unique]
+    #     tokens_unique_frequency.append(len(indices))
 
     terms = TermList()
     for n, token in enumerate(tokens_unique):
-        terms.add_term(token, tokens_unique_frequency[n])
+        terms.add_term(token)
 
     return terms
