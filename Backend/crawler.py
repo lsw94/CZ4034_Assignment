@@ -11,7 +11,7 @@ api_keys = ["6209cba3f204447aa019713ad53decf5", "a99a17c2950f4e66bcc4ad161b02f29
 # sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-news", "reuters", "vice-news",
 #            "bloomberg", "msnbc", "daily-mail", "associated-press", "fox-news", "the-huffington-post",
 #            "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
-sources = ["the-economist", "bbc-news", "al-jazeera-english"]
+sources = ["the-economist", "bbc-news"]
 url_everything = "https://newsapi.org/v2/everything?pageSize=100&apiKey=a99a17c2950f4e66bcc4ad161b02f292&sources="
 data_folder = "Data"
 raw_path = os.path.join(data_folder, "raw.json")
@@ -53,16 +53,12 @@ def query_news(requery):
         terms = load_json_list(terms_path)
         documents = load_json_list(documents_processed_path)
     else:
-        terms = process_documents(documents)
-        for term in terms:
-            positional_index = documents.get_positional_index(term.term)
-            # if positional_index.term_frequency() != term.term_frequency:
-            #     print("Error")
-            #     exit()
-            term.add_positional_index(positional_index)
+        terms, documents = process_documents(documents)
+
         save_json(jsonpickle.encode(terms), terms_path)
         save_json(jsonpickle.encode(documents), documents_processed_path)
-    terms.sort_by_term_length()
+
+
     print("-----Database size-----")
     print("Number of documents: " + str(len(documents)))
     print("Number of terms: " + str(len(terms)))
@@ -97,4 +93,6 @@ def process_jsons(datas):
         for article in articles:
             documents.add_document(article["source"]["name"], article["title"], article["description"], article["url"],
                                    article["urlToImage"], article["publishedAt"], article["content"])
+    documents.sort_by_document_id()
+    documents.generate_doc_id_length_stop_positions()
     return documents

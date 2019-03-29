@@ -11,7 +11,7 @@ class Document:
         self.title_set = None
         self.description_set = None
         self.content_set = None
-        self.document_tfidf_score = []
+        self.tfidfs = None
 
         if source is None:
             self.source = ""
@@ -78,8 +78,6 @@ class Document:
         return len(self.source_processed) + len(self.title_processed) + len(self.description_processed) + len(
             self.content_processed)
 
-    def set_document_tfidf_score(self, document_tfidf_score):
-        self.document_tfidf_score = document_tfidf_score
+    def set_document_tfidfs(self, document_tfidfs):
+        self.tfidfs = document_tfidfs
 
-    def get_document_tfidf_score(self):
-        return self.document_tfidf_score

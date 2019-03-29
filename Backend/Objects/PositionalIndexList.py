@@ -1,6 +1,3 @@
-
-
-
 class PositionalIndexList:
 
     def __init__(self):
@@ -28,11 +25,16 @@ class PositionalIndexList:
             return self.positional_index_list[item]
 
     def get_positional_index_by_doc_id(self, id):
-        for pi in self.positional_index_list:
-            if id < pi.document:
-                break
-            if id == pi.document:
-                return pi
+        l = 0
+        r = len(self.positional_index_list) - 1
+        while l <= r:
+            mid = l + (r - l) // 2
+            if self.positional_index_list[mid].document == id:
+                return self.positional_index_list[mid]
+            elif self.positional_index_list[mid].document < id:
+                l = mid + 1
+            else:
+                r = mid - 1
         return None
 
     def sort_by_document_id(self):
@@ -45,11 +47,15 @@ class PositionalIndexList:
             doc_id_list.append(pos_id.document)
         return doc_id_list
 
-    def is_in_list(self, doc):
-        for pi in self.positional_index_list:
-            if doc.document < pi.document:
-                break
-            if doc == pi:
+    def is_doc_id_in_list(self, id):
+        l = 0
+        r = len(self.positional_index_list) - 1
+        while l <= r:
+            mid = l + (r - l) // 2
+            if self.positional_index_list[mid].document == id:
                 return True
+            elif self.positional_index_list[mid].document < id:
+                l = mid + 1
+            else:
+                r = mid - 1
         return False
-

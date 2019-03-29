@@ -6,8 +6,8 @@ from Backend.Objects.PositionalIndexList import PositionalIndexList
 class DocumentList:
 
     def __init__(self):
-        self.idx = 0
         self.document_list = []
+        self.doc_id_length_stop_position_dict = {}
 
     def add_document(self, source, title, description, url, image_url, publish_time, content):
         self.document_list.append(
@@ -35,11 +35,18 @@ class DocumentList:
         return positional_index_list
 
     def get_document(self, id):
-        for doc in self.document_list:
-            if doc.id > id:
-                break
-            if doc.id == id:
-                return doc
+        if str(len(str(id))) not in self.doc_id_length_stop_position_dict:
+            return None
+        l, r = self.doc_id_length_stop_position_dict[str(len(str(id)))]
+        while l <= r:
+            mid = l + (r - l) // 2
+            if self.document_list[mid].id == id:
+                return self.document_list[mid]
+            elif self.document_list[mid].id < id:
+                l = mid + 1
+            else:
+                r = mid - 1
+        return None
 
     def get_total_number_of_terms(self):
         total = 0
@@ -70,3 +77,17 @@ class DocumentList:
         for document in self.document_list:
             content_list.append(document.content_processed)
         return content_list
+
+    def sort_by_document_id(self):
+        self.document_list.sort(key=lambda x: x.id)
+
+    def generate_doc_id_length_stop_positions(self):
+        current_length = 1
+        start_position = 0
+        for n, doc in enumerate(self.document_list):
+            if len(str(doc.id)) > current_length:
+                end_position = n
+                self.doc_id_length_stop_position_dict[str(current_length)] = (start_position, end_position)
+                start_position = n
+                current_length = len(str(doc.id))
+        self.doc_id_length_stop_position_dict[current_length] = (start_position, len(self.document_list) - 1)
