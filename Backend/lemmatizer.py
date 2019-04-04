@@ -1,3 +1,4 @@
+import math
 import re
 
 import nltk
@@ -6,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 from Backend.Objects.TermList import TermList
+from Backend.Objects.TFIDF import TFIDF
 
 stop_words = set(stopwords.words('english'))
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -62,13 +64,29 @@ def process_documents(documents):
 
     tokens_unique = np.unique(np.asarray(tokens))
     tokens_unique = np.delete(tokens_unique, np.where(tokens_unique == ""))
-    # tokens_unique_frequency = []
-    # for token_unique in tokens_unique:
-    #     indices = [i for i, token in enumerate(tokens) if token == token_unique]
-    #     tokens_unique_frequency.append(len(indices))
 
     terms = TermList()
     for n, token in enumerate(tokens_unique):
         terms.add_term(token)
 
-    return terms
+    terms.sort_by_term_length()
+    terms.generate_term_length_stop_positions()
+
+    for term in terms:
+        positional_index = documents.get_positional_index(term.term)
+        term.add_positional_index(positional_index)
+
+    for term in terms:
+        idf = math.log((len(documents) / term.document_frequency), 10)
+        term.set_term_idf(idf)
+    for document in documents:
+        tfidfs = TFIDF()
+        for term in terms:
+            if not term.positional_indexes.is_doc_id_in_list(document.id):
+                continue
+            term_position_index = term.get_positional_index_of_doc(document.id)
+            document_tf = 1 + math.log(len(term_position_index), 10)
+            tfidfs.add_tidf(term.id, document_tf, term.idf)
+        tfidfs.apply_normalization()
+        document.set_document_tfidfs(tfidfs)
+    return terms, documents

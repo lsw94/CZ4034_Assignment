@@ -6,8 +6,12 @@ class TermDocumentSimilarity:
     def __init__(self, terms):
         self.terms = terms
         if len(self.terms) == 1:
-            self.similar_document_ids = self.terms[0].positional_indexes.get_document_id_list()
-            self.similar_document_in_order = [True] * len(self.similar_document_ids)
+            if self.terms[0] is None:
+                self.similar_document_ids = []
+                self.similar_document_in_order = []
+            else:
+                self.similar_document_ids = self.terms[0].positional_indexes.get_document_id_list()
+                self.similar_document_in_order = [True] * len(self.similar_document_ids)
         else:
             self.similar_document_ids = self.find_similar_positional_index()
             self.similar_document_in_order = []
@@ -28,7 +32,7 @@ class TermDocumentSimilarity:
                 return []
             temp_positional_index = PositionalIndexList()
             for pi_a in positional_index_a:
-                if positional_index_b.is_in_list(pi_a):
+                if positional_index_b.is_doc_id_in_list(pi_a.document):
                     temp_positional_index.add_positional_index(pi_a)
             positional_index_list[n + 1] = temp_positional_index
         return positional_index_list[len(positional_index_list) - 1].get_document_id_list()
@@ -38,7 +42,7 @@ class TermDocumentSimilarity:
             positional_indexes = []
             falsed = False
             for term in self.terms:
-                positional_indexes.append(term.get_positional_index(similar_document_id))
+                positional_indexes.append(term.get_positional_index_of_doc(similar_document_id))
             for n in range(len(positional_indexes) - 1):
                 current_content_position = positional_indexes[n].position_content
                 current_description_position = positional_indexes[n].position_description

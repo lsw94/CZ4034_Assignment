@@ -105,3 +105,11 @@ venv.bak/
 .idea/CZ4034_Assignment.iml
 .idea/workspace.xml
 Backend/Data/
+Backend/news-aggregator-dataset/uci-news-aggregator.csv
+Backend/news-category-dataset/News_Category_Dataset_v2.json
+Classification/bbc/
+Classification/bbc_news_classfication_model.h5
+Classification/News_Category_Dataset_v2.json
+Classification/tokenizer.pickle
+Classification/dictionary.pickle
+Backend/Models/saved_model.pkl

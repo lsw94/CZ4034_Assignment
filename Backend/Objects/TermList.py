@@ -5,6 +5,7 @@ class TermList:
 
     def __init__(self):
         self.term_list = []
+        self.term_length_stop_position_dict = {}
 
     def __len__(self):
         return len(self.term_list)
@@ -24,34 +25,25 @@ class TermList:
             total = total + len(term.positional_index)
         return total
 
-    def get_term(self, search_term):
-        for term in self.term_list:
-            if len(term) > len(search_term):
-                break
-            if len(search_term) != len(term):
-                continue
-            if search_term == term.term:
-                return term
+    def get_term(self, term):
+        if str(len(term)) not in self.term_length_stop_position_dict:
+            return None
+        l, r = self.term_length_stop_position_dict[str(len(term))]
+        for n in range(l, r):
+            if self.term_list[n].term == term:
+                return self.term_list[n]
         return None
 
     def sort_by_term_length(self):
         self.term_list.sort(key=lambda x: len(x))
-        # self.term_list = self.sort(self.term_list)
 
-    # def sort(self, array):
-    #     less = []
-    #     equal = []
-    #     greater = []
-    #
-    #     if len(array) > 1:
-    #         pivot = array[0]
-    #         for x in array:
-    #             if len(x) < len(pivot):
-    #                 less.append(x)
-    #             elif len(x) == len(pivot):
-    #                 equal.append(x)
-    #             else:
-    #                 greater.append(x)
-    #         return self.sort(less) + equal + self.sort(greater)
-    #     else:
-    #         return array
+    def generate_term_length_stop_positions(self):
+        current_length = 1
+        start_position = 0
+        for n, term in enumerate(self.term_list):
+            if len(term) > current_length:
+                end_position = n
+                self.term_length_stop_position_dict[str(current_length)] = (start_position, end_position)
+                start_position = n
+                current_length = len(term)
+        self.term_length_stop_position_dict[str(current_length)] = (start_position, len(self.term_list) - 1)
