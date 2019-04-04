@@ -118,5 +118,5 @@ def categorize_document(documents):
 
 
 
-build_model()
+# build_model()
 
