@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import numpy as np
 import sklearn
+import os
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
@@ -23,7 +24,7 @@ wordnet_lemmatizer = WordNetLemmatizer()
 regex = re.compile('[^a-zA-Z0-9 ]')
 
 
-def get_words( headlines ):
+def get_words(headlines):
     headlines_onlyletters = regex.sub("", headlines)  # Remove everything other than letters
     words = headlines_onlyletters.lower().split()  # Convert to lower case, split into individual words
     meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if word not in stop_words]  # Removing stopwords and lemmatize
@@ -103,5 +104,19 @@ def build_model():
     # joblib.dump(logistic_Regression, 'saved_model.pkl')
 
 
-build_model()
+def categorize_document(documents):
+    load_model = joblib.load(os.path.join("Models", "saved_model.pkl"))
+    dataset_title = []
+    for doc_id in documents:
+        dataset_title.append(get_words(doc_id.title))
+    vectorize = CountVectorizer(analyzer="word")
+    tfidf_transformer = TfidfTransformer()
+    bagOfWords_test = vectorize.fit_transform(dataset_title)
+    test_tfidf = tfidf_transformer.fit_transform(bagOfWords_test)
+    predicted_category = load_model.predict(test_tfidf)
+    print(predicted_category)
+
+
+
+# build_model()
 

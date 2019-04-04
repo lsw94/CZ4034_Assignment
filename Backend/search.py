@@ -6,7 +6,6 @@ import sklearn
 from sklearn.externals import joblib
 import Backend.crawler as crawler
 import Backend.lemmatizer as lemmatizer
-import Backend.categorize as categorize
 from Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -34,16 +33,25 @@ def search_string(string):
     similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms)
     documents_tfidf_dict = get_document_query_tfidf_score(found_terms, relevent_documents_ids)
     end_t = time.time()
+    doc_ids = []
+    tfidf_score = []
+    for k, value in documents_tfidf_dict.items():
+        doc_ids.append(k)
+        tfidf_score.append(value)
+    tfidf_score, doc_ids = zip(*sorted(zip(tfidf_score, doc_ids)))
     print("Search: %.2fs" % (end_t - start_t))
-    print("------Results-------")
-    for n, spis in enumerate(similar_positional_index):
-        print("------" + str(n + 1) + "------")
-        for spi in spis:
-            for m, sdi in enumerate(spi.similar_document_ids):
-                if spi.similar_document_in_order[m] is True:
-                    print(documents.get_document(sdi).title)
-                    # print(sdi)
-            print("...")
+    for id in reversed(doc_ids):
+        print(documents.get_document(id).title)
+
+    # print("------Results-------")
+    # for n, spis in enumerate(similar_positional_index):
+    #     print("------" + str(n + 1) + "------")
+    #     for spi in spis:
+    #         for m, sdi in enumerate(spi.similar_document_ids):
+    #             if spi.similar_document_in_order[m] is True:
+    #                 print(documents.get_document(sdi).title)
+    #                 # print(sdi)
+    #         print("...")
 
 
 def find_similar_documents(found_terms):
@@ -104,17 +112,6 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-def categorize_document():
-    load_model = joblib.load("saved_model.pkl")
-    dataset_title = []
-    for doc_id in documents:
-        dataset_title.append(categorize.get_words(doc_id.title))
-    vectorize = CountVectorizer(analyzer="word")
-    tfidf_transformer = TfidfTransformer()
-    bagOfWords_test = vectorize.fit_transform(dataset_title)
-    test_tfidf = tfidf_transformer.fit_transform(bagOfWords_test)
-    predicted_category = load_model.predict(test_tfidf)
-    print(predicted_category)
 
 
 initialize()

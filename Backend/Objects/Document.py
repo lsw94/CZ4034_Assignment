@@ -12,6 +12,7 @@ class Document:
         self.description_set = None
         self.content_set = None
         self.tfidfs = None
+        self.category = None
 
         if source is None:
             self.source = ""
@@ -80,4 +81,8 @@ class Document:
 
     def set_document_tfidfs(self, document_tfidfs):
         self.tfidfs = document_tfidfs
+
+    def get_strings(self):
+        return self.source + " " + self.title + " " + self.description + " " + self.content
+
 
