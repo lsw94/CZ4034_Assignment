@@ -103,5 +103,17 @@ def build_model():
     # joblib.dump(logistic_Regression, 'saved_model.pkl')
 
 
+def categorize_document(documents):
+    load_model = joblib.load("saved_model.pkl")
+    dataset_title = []
+    for doc_id in documents:
+        dataset_title.append(categorize.get_words(doc_id.title))
+    vectorize = CountVectorizer(analyzer="word")
+    tfidf_transformer = TfidfTransformer()
+    bagOfWords_test = vectorize.fit_transform(dataset_title)
+    test_tfidf = tfidf_transformer.fit_transform(bagOfWords_test)
+    predicted_category = load_model.predict(test_tfidf)
+    print(predicted_category)
+
 build_model()
 

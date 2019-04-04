@@ -104,7 +104,7 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-def categorize_document():
+def categorize_document(documents):
     load_model = joblib.load("saved_model.pkl")
     dataset_title = []
     for doc_id in documents:
