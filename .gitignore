@@ -105,3 +105,5 @@ venv.bak/
 .idea/CZ4034_Assignment.iml
 .idea/workspace.xml
 Backend/Data/
+Backend/news-aggregator-dataset/uci-news-aggregator.csv
+Backend/news-category-dataset/News_Category_Dataset_v2.json
