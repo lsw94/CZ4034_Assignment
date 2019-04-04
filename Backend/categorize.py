@@ -9,7 +9,6 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
-import Backend.categorize as categorize
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC, LinearSVC
@@ -25,7 +24,7 @@ wordnet_lemmatizer = WordNetLemmatizer()
 regex = re.compile('[^a-zA-Z0-9 ]')
 
 
-def get_words( headlines ):
+def get_words(headlines):
     headlines_onlyletters = regex.sub("", headlines)  # Remove everything other than letters
     words = headlines_onlyletters.lower().split()  # Convert to lower case, split into individual words
     meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if word not in stop_words]  # Removing stopwords and lemmatize
@@ -109,7 +108,7 @@ def categorize_document(documents):
     load_model = joblib.load(os.path.join("Models", "saved_model.pkl"))
     dataset_title = []
     for doc_id in documents:
-        dataset_title.append(categorize.get_words(doc_id.title))
+        dataset_title.append(get_words(doc_id.title))
     vectorize = CountVectorizer(analyzer="word")
     tfidf_transformer = TfidfTransformer()
     bagOfWords_test = vectorize.fit_transform(dataset_title)
