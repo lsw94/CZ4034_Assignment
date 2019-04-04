@@ -2,13 +2,10 @@ import math
 import time
 
 import numpy as np
-import sklearn
-from sklearn.externals import joblib
+
 import Backend.crawler as crawler
 import Backend.lemmatizer as lemmatizer
 from Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import CountVectorizer
 
 documents = None
 terms = None
@@ -35,13 +32,25 @@ def search_string(string):
     end_t = time.time()
     doc_ids = []
     tfidf_score = []
+
+    if documents_tfidf_dict is None:
+        document_return = []
+        for id in relevent_documents_ids:
+            doc = documents.get_document(id)
+            document_return.append(doc)
+        return document_return
+
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
         tfidf_score.append(value)
     tfidf_score, doc_ids = zip(*sorted(zip(tfidf_score, doc_ids)))
     print("Search: %.2fs" % (end_t - start_t))
+    document_return = []
     for id in reversed(doc_ids):
-        print(documents.get_document(id).title)
+        doc = documents.get_document(id)
+        document_return.append(doc)
+        print(doc.title)
+    return document_return
 
     # print("------Results-------")
     # for n, spis in enumerate(similar_positional_index):
@@ -74,7 +83,7 @@ def find_similar_documents(found_terms):
 def get_document_query_tfidf_score(query, relevant_document_ids):
     query_filtered = [x for x in query if x is not None]
     if len(query_filtered) < 2:
-        return
+        return None
     query_text = []
     for q in query_filtered:
         query_text.append(q.term)
@@ -112,8 +121,8 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-
-
 initialize()
 # categorize_document()
 search_string("Donald Trump America Safety")
+search_string("Christchuch shooting")
+search_string("Malaysia Singapore")

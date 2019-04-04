@@ -5,15 +5,15 @@ import random
 import numpy as np
 import pandas as pd
 from keras.callbacks import ModelCheckpoint
-from keras.layers import Embedding, Dense, Input, LSTM, GRU
-from keras.models import Model
+from keras.layers import Embedding, Dense, Input, LSTM, GRU, Flatten, LeakyReLU, Concatenate
+from keras.models import Model, Sequential
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils.np_utils import to_categorical
 from keras import optimizers
 
-maxlen = 200
-max_words = 20000
+maxlen = 300
+max_words = 10000
 
 categories = ['business', 'entertainment', 'politics', 'sport', 'tech']
 
@@ -108,44 +108,77 @@ def main():
     y_train = to_categorical(y_train)
     y_val = to_categorical(y_val)
 
-    model = create_model()
-    optimizer = optimizers.Adam(lr=0.001)
-    model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
+    model = create_model(tokenizer.word_index)
+    # optimizer = optimizers.Adam(lr=0.001)
+    # optimizer = optimizers.Adadelta()
+    model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
     filepath = 'bbc_news_classfication_model.h5'
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-    history = model.fit(x_train, y_train, epochs=50, batch_size=32, validation_data=(x_val, y_val), shuffle=True,
+    history = model.fit(x_train, y_train, epochs=50, batch_size=16, validation_data=(x_val, y_val), shuffle=True,
                         callbacks=[checkpoint])
 
 
-def create_model():
-    embedding_dim = 100
+def create_model(word_index):
+    embeddings_index = {}
+    f = open('glove.6B.300d.txt', encoding="utf8")
+    for line in f:
+        values = line.split()
+        word = values[0]
+        coefs = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+    f.close()
+    #
+    embedding_dim = 300
+    embedding_matrix = np.zeros((max_words, embedding_dim))
+    for word, i in word_index.items():
+        if i < max_words:
+            embedding_vector = embeddings_index.get(word)
+            if embedding_vector is not None:
+                embedding_matrix[i] = embedding_vector
+
     # visible = Input(shape=(maxlen,))
     # hidden1 = Embedding(max_words, embedding_dim, input_length=maxlen)(visible)
     # flatten1 = Flatten()(hidden1)
-    # hidden2 = Dense(256, kernel_initializer='uniform')(flatten1)
+    # hidden2 = Dense(128, kernel_initializer='uniform')(flatten1)
     # hidden2activation = LeakyReLU(alpha=.01)(hidden2)
-    # hidden3 = Dense(128, kernel_initializer='uniform')(hidden2activation)
+    # hidden3 = Dense(64, kernel_initializer='uniform')(hidden2activation)
     # hidden3activation = LeakyReLU(alpha=.01)(hidden3)
-    # hidden23 = Concatenate()([hidden2, hidden3activation])
+    # hidden23 = Concatenate()([hidden2activation, hidden3activation])
     # output = Dense(20, kernel_initializer='uniform', activation='softmax')(hidden23)
     # model = Model(inputs=visible, outputs=output)
 
-    visible = Input(shape=(maxlen,))
-    hidden1 = Embedding(max_words, embedding_dim, input_length=maxlen)(visible)
-    # hidden2 = LSTM(128,return_sequences = True)(hidden1)
-    hidden2 = GRU(40)(hidden1)
-    # hidden3 = LSTM(64)(hidden2)
-    output = Dense(20, kernel_initializer='uniform', activation='softmax')(hidden2)
-    model = Model(inputs=visible, outputs=output)
 
-    # model = Sequential()
-    # model.add(Embedding(max_words, embedding_dim, input_length=maxlen))
-    # model.add(Flatten())
-    # model.add(Dense(128, kernel_initializer='normal'))
-    # model.add(LeakyReLU(alpha=.01))
-    # model.add(Dense(64, kernel_initializer='normal'))
-    # model.add(LeakyReLU(alpha=.01))
-    # model.add(Dense(20, kernel_initializer='normal', activation='softmax'))
+    # visible = Input(shape=(maxlen,))
+    # hidden1 = Embedding(max_words, embedding_dim, input_length=maxlen)(visible)
+    # flatten1 = Flatten()(hidden1)
+    # # hidden2 = Dense(128, kernel_initializer='uniform')(flatten1)
+    # # hidden2activation = LeakyReLU(alpha=.01)(hidden2)
+    # hidden3 = Dense(64, kernel_initializer='uniform')(flatten1)
+    # hidden3activation = LeakyReLU(alpha=.01)(hidden3)
+    # hidden23 = Concatenate()([flatten1, hidden3activation])
+    # output = Dense(20, kernel_initializer='uniform', activation='softmax')(hidden23)
+    # model = Model(inputs=visible, outputs=output)
+
+    # visible = Input(shape=(maxlen,))
+    # hidden1 = Embedding(max_words, embedding_dim, input_length=maxlen)(visible)
+    # hidden2 = LSTM(64, activation=None)(hidden1)
+    # hidden2activation = LeakyReLU(alpha=.01)(hidden2)
+    # output = Dense(20, kernel_initializer='uniform', activation='softmax')(hidden2activation)
+    # model = Model(inputs=visible, outputs=output)
+
+    # model.layers[1].set_weights([embedding_matrix])
+    # model.layers[1].trainable = False
+
+    model = Sequential()
+    model.add(Embedding(max_words, embedding_dim, input_length=maxlen))
+    model.add(Flatten())
+    model.add(Dense(128, kernel_initializer='normal'))
+    model.add(LeakyReLU(alpha=.01))
+    model.add(Dense(64, kernel_initializer='normal'))
+    model.add(LeakyReLU(alpha=.01))
+    model.add(Dense(20, kernel_initializer='normal', activation='softmax'))
+    model.layers[0].set_weights([embedding_matrix])
+    model.layers[0].trainable = False
 
     model.summary()
     return model
