@@ -1,1 +1,84 @@
 {% extends 'base.html' %}
+
+
+{% block content %}
+<style>
+    .top-positioning {
+        margin-left: 11%;
+        margin-top: 3%;
+    }
+    .results-positioning {
+        margin-left: 11%;
+        margin-top: 3%;
+    }
+    .filter-positioning {
+        margin-top: 1%;
+    }
+    .filter-wording {
+        margin-left:10%;
+    }
+</style>
+
+    <div class="row top-positioning">
+
+        <form class="form-check-inline col-lg-5 col-md-6" method="get" action=".">
+            {{ form }}
+            <button class="btn btn-outline-success" type="submit">Search</button>
+
+        </form>
+
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light filter-positioning" style="background-color: #e3f2fd;">
+  <a class="navbar-brand filter-wording" href="#">Filter</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+         <li class="dropdown open megamenu">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Big Menu <span class="caret"></span></a>
+             <div class="dropdown-menu">
+              <ul class="list-unstyled col-lg-3 col-sm-6" role="menu">
+                <li><h3>Start</h3></li>
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more link</a></li>
+              </ul>
+             </div>
+         </li>
+      <!--<li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>-->
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+    <hr>
+     {% for abc in results %}
+         <div class="row results-positioning">{{ abc }}</div>
+        {% endfor %}
+
+
+{% endblock %}

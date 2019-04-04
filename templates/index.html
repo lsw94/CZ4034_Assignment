@@ -1,14 +1,30 @@
 {% extends 'base.html' %}
 
+
+
 {% block content %}
-    <form method="post">
-    <div class="form-row">
-    <div class="form-group col-md-3">
-      <input type="text" class="form-control" name="search_input" id="search_input" placeholder="Search">
-    </div>
-           <button class="btn btn-primary" type="submit">Search</button>
-  </div>
-    </form>
+<style>
+    .index-searchform {
+            position: absolute;
+            left: 29%;
+            top: 50%;
+
+    }
+
+    </style>
+
+        <div class="row">
+            <form class="form-check-inline col-lg-5 col-md-6 index-searchform" method="get" action={% url 'search' %}>
+
+                <!--<input type="text" class="form-control" name="search_input" id="search_input" placeholder="Search">-->
+                {{ form }}
+                <button class="btn btn-outline-success" type="submit">Search</button>
+
+            </form>
+        </div>
+
+
+
 {% endblock %}
 
 
