@@ -13,11 +13,12 @@ api_keys = ["6209cba3f204447aa019713ad53decf5", "a99a17c2950f4e66bcc4ad161b02f29
 #            "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
 sources = ["the-economist", "bbc-news"]
 url_everything = "https://newsapi.org/v2/everything?pageSize=100&apiKey=a99a17c2950f4e66bcc4ad161b02f292&sources="
+root_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Backend")
 data_folder = "Data"
-raw_path = os.path.join(data_folder, "raw.json")
-documents_path = os.path.join(data_folder, "documents.json")
-documents_processed_path = os.path.join(data_folder, "documents_processed.json")
-terms_path = os.path.join(data_folder, "terms.json")
+raw_path = os.path.join(root_dir, os.path.join(data_folder, "raw.json"))
+documents_path = os.path.join(root_dir, os.path.join(data_folder, "documents.json"))
+documents_processed_path = os.path.join(root_dir, os.path.join(data_folder, "documents_processed.json"))
+terms_path = os.path.join(root_dir, os.path.join(data_folder, "terms.json"))
 maximum_number_of_news = 1000
 
 
