@@ -113,3 +113,4 @@ Classification/News_Category_Dataset_v2.json
 Classification/tokenizer.pickle
 Classification/dictionary.pickle
 Backend/Models/saved_model.pkl
+Classification/glove.6B.300d.txt

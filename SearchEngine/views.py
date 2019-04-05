@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 
-from .forms import SearchForm
+# from Backend.search import search_string
+from .forms import SearchForm, FilterForm
 # from Backend import
 # Create your views here.
 
@@ -18,16 +19,21 @@ def result_view(request):
 
     if request.method == 'GET':
         form = SearchForm(request.GET)
+        filters = FilterForm(request.GET)
 
         if not form.is_valid():
             return redirect('/')
 
-        query = request.GET.get('query')
+        query = str(request.GET.get('query'))
+        # results = search_string(query)
+
+
 
     # query results to be inserted here
 
         context = {
             "form": form,
+            "filter": filters,
             "results": ["doc 1", "doc 2","doc 3", "doc 4"]
         }
     else:

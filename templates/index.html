@@ -3,40 +3,21 @@
 
 
 {% block content %}
-<style>
-    .index-searchform {
+    <style>
+        .index-searchform {
             position: absolute;
             left: 29%;
             top: 50%;
 
-    }
+        }
 
     </style>
 
-        <div class="row">
-            <form class="form-check-inline col-lg-5 col-md-6 index-searchform" method="get" action={% url 'search' %}>
+    <div class="row">
+        <form class="form-check-inline col-lg-5 col-md-6 index-searchform" method="get" action={% url 'search' %}>
+            {{ form }}
+            <button class="btn btn-outline-success" type="submit">Search</button>
 
-                <!--<input type="text" class="form-control" name="search_input" id="search_input" placeholder="Search">-->
-                {{ form }}
-                <button class="btn btn-outline-success" type="submit">Search</button>
-
-            </form>
-        </div>
-
-
-
+        </form>
+    </div>
 {% endblock %}
-
-
-
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>News Finder</title>
-</head>
-<body>
-<p>This is a template</p>
-</body>
-</html>
--->

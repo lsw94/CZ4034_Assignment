@@ -27,7 +27,8 @@
 .navbar .dropdown {position:static;}
 
 .navbar .dropdown-menu {
-  width:100%;
+  width:80%;
+  margin:auto;
   left:0;
   right:0;
 /*  height of nav-item  */
@@ -40,8 +41,8 @@
 }
   
   .navbar .dropdown-menu {
-    border: 1px solid rgba(0,0,0,.15);
-    background-color: #fff;
+    border: 1px solid #28a745;
+    background-color: #ffffff;
   }
 
 }
