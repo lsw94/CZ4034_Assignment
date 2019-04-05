@@ -1,14 +1,24 @@
 import math
 import time
-
+import flask
 import numpy as np
-
+from flask import request
 import Backend.crawler as crawler
 import Backend.lemmatizer as lemmatizer
 from Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
+import jsonpickle
 
+app = flask.Flask(__name__)
 documents = None
 terms = None
+
+
+@app.route("/search", methods=["GET"])
+def search():
+    query = request.args.get('query')
+    print(query)
+    data = search_string(query)
+    return jsonpickle.encode(data)
 
 
 def initialize():
@@ -121,8 +131,12 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-initialize()
-# categorize_document()
-search_string("Donald Trump America Safety")
-search_string("Christchuch shooting")
-search_string("Malaysia Singapore")
+if __name__ == '__main__':
+    initialize()
+    app.run()
+
+# initialize()
+# # categorize_document()
+# search_string("Donald Trump America Safety")
+# search_string("Christchuch shooting")
+# search_string("Malaysia Singapore")
