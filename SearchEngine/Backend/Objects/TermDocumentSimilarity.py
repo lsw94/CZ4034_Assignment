@@ -1,4 +1,4 @@
-from Backend.Objects.PositionalIndexList import PositionalIndexList
+from SearchEngine.Backend.Objects.PositionalIndexList import PositionalIndexList
 
 
 class TermDocumentSimilarity:
