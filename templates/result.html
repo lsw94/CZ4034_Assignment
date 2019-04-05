@@ -2,44 +2,110 @@
 
 
 {% block content %}
-    <script type="text/javascript">
-        $(document).ready()
-        {
-             $("#filtersForm").submit();
+    <script>
+        $(document).ready(function () {
+            $('#filtersForm').on("change", "input:checkbox", function () {
+                // if ($(this).is(':checked')) {
+                $('#filtersForm').submit();
 
-            $('input[type="checkbox"]').click(function () {
-                
-            })
-        }
-               /* if ($(this).is(':checked')) {
 
-                    $("#filtersForm").submit();
+            });
+        });
 
-                }
-
-            });*/
 
         function submitFilter() {
-             alert("test");
-            /*var formData = new FormData();
+            var formData = new FormData();
             $('#filtersForm input[type="checkbox"]').each(function () {
-               if ($(this).is(':checked')) {
-                   var name = $(this).attr('name');
-                   formData.append("filters[]", name);
-               }
-            });
-
-            $.ajax({
-                type: 'post',
-                url: window.location.href,
-                data: formData,
-                success: function (response) {
-                    $('#success__para').html("You have submitted successfully");
+                if ($(this).is(':checked')) {
+                    formData.append("filters[]", $.trim($(this).parent().text()));
                 }
             });
 
-            return false;*/
+            /*var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                   alert(this.responseText);
+                }
+            };
+            xhttp.open("GET", $('#filtersForm').attr('action') + formData.get("filters[]") , true);
+            xhttp.send();
+            */
+
+            $.ajax({
+                url: window.location.href, // the endpoint
+                type: "POST", // http method
+                data: formData,
+                success: function (json, textMsg, xhr) {
+                    alert('AJAX called successfully');
+                },
+                error: function (xhr, errmsg, err) {
+                    alert(errmsg);
+                }
+            });
         }
+
+
+         function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        var csrftoken = getCookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+        /* if ($(this).is(':checked')) {
+
+             $("#filtersForm").submit();
+
+         }
+
+     });*/
+
+        //function submitFilter() {
+        //  alert("test");
+        /*var formData = new FormData();
+        $('#filtersForm input[type="checkbox"]').each(function () {
+           if ($(this).is(':checked')) {
+               var name = $(this).attr('name');
+               formData.append("filters[]", name);
+           }
+        });
+
+        $.ajax({
+            type: 'post',
+            url: window.location.href,
+            data: formData,
+            success: function (response) {
+                $('#success__para').html("You have submitted successfully");
+            }
+        });
+
+        return false;*/
+        //}
     </script>
     <style>
         .top-positioning {
@@ -60,11 +126,18 @@
             margin-left: 9%;
         }
 
+        .url-wording {
+            font-size: 0.9em;
+            font-family: "Times New Roman", Times, serif;
+            color: #28a745;
+
+        }
+
     </style>
 
     <div class="row top-positioning">
 
-        <form class="form-check-inline col-lg-5 col-md-6" method="get" action=".">
+        <form class="form-check-inline col-lg-5 col-md-6" method="GET" action="{% url 'search' %}">
             {{ form }}
             <button class="btn btn-outline-success" type="submit">Search</button>
 
@@ -89,11 +162,11 @@
 
                         <div class="container" style="margin-top: 1%">
                             <span class="text-uppercase" style="margin-left:20px; color: #28a745">Categories</span>
-                            <form id="filtersForm" method="post" class="row" style="margin-top:1%">
-                            {% csrf_token %}
+                            <form id="filtersForm" method="POST" class="row" style="margin-top:1%" onsubmit="submitFilter()">
+                                {% csrf_token %}
                                 {% for item in filter %}
                                     {% if forloop.counter == 1 or forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 %}
-                                        <div class="col-md-3">
+                                        <div class="col-md-3 col-lg-3">
                                         <ul class="nav flex-column">
                                     {% endif %}
                                 <li class="nav-item"> {{ item }} {{ item.label }} </li>
@@ -112,11 +185,22 @@
         </div>
     </nav>
     <hr>
-    {% for abc in results %}
+    {% for document in results %}
         <div class="row results-positioning">
-            {{ abc }}</div>
+            <div class="col-md-1 col-lg-1">
+                <img src={{ document.image_url }} height="56" width="100">
+            </div>
+            <div class="col-md-4 col-lg-4">
+                <a href={{ document.url }}> {{ document.title }}</a><br/>
+                <span class="url-wording">{{ document.url }}</span>
+                <br/>
+                {{ document.description }}
+                {{ document.category }}
+
+            </div>
+        </div>
     {% endfor %}
 
-    <p id="success_para" ></p>
+    <p id="success_para"></p>
 
 {% endblock %}
