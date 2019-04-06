@@ -1,25 +1,17 @@
-import re
+import os
 import random
-import pandas as pd # CSV file I/O (pd.read_csv)
+import re
+import pickle
+import numpy as np
+import pandas as pd  # CSV file I/O (pd.read_csv)
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-import numpy as np
-import os
-import Classification.main as main
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.pipeline import Pipeline
 from sklearn.externals import joblib
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import GridSearchCV
-from sklearn.svm import SVC, LinearSVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score ,confusion_matrix
-from sklearn.model_selection import cross_val_score
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.svm import LinearSVC
 
+import Classification.main as main
 
 stop_words = set(stopwords.words('english'))
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -29,7 +21,8 @@ regex = re.compile('[^a-zA-Z0-9 ]')
 def get_words(headlines):
     headlines_onlyletters = regex.sub("", headlines)  # Remove everything other than letters
     words = headlines_onlyletters.lower().split()  # Convert to lower case, split into individual words
-    meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if word not in stop_words]  # Removing stopwords and lemmatize
+    meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if
+                        word not in stop_words]  # Removing stopwords and lemmatize
     return " ".join(meaningful_words)  # Joining the words
 
 
@@ -84,15 +77,17 @@ def build_model():
     # X_test = np.array(X_test)
     # Y_train = np.array(Y_train)
     # Y_test = np.array(Y_test)
-    cleanHeadlines_train = [] #To append processed headlines
-    cleanHeadlines_test = [] #To append processed headlines
-    number_reviews_train = len(text_train) #Calculating the number of reviews
-    number_reviews_test = len(text_validate) #Calculating the number of reviews
-    for i in range(0,number_reviews_train):
-        cleanHeadline = get_words(text_train[i]) #Processing the data and getting words with no special characters, numbers or html tags
+    cleanHeadlines_train = []  # To append processed headlines
+    cleanHeadlines_test = []  # To append processed headlines
+    number_reviews_train = len(text_train)  # Calculating the number of reviews
+    number_reviews_test = len(text_validate)  # Calculating the number of reviews
+    for i in range(0, number_reviews_train):
+        cleanHeadline = get_words(
+            text_train[i])  # Processing the data and getting words with no special characters, numbers or html tags
         cleanHeadlines_train.append(cleanHeadline)
-    for i in range(0,number_reviews_test):
-        cleanHeadline = get_words(text_validate[i]) #Processing the data and getting words with no special characters, numbers or html tags
+    for i in range(0, number_reviews_test):
+        cleanHeadline = get_words(
+            text_validate[i])  # Processing the data and getting words with no special characters, numbers or html tags
         cleanHeadlines_test.append(cleanHeadline)
     # Pipelined process
     # processing_step = Pipeline([('vect', CountVectorizer(analyzer="word")),
@@ -163,10 +158,9 @@ def categorize_document(documents):
     #     print(title + " ----- " + predicted_category[i])
 
 
-<<<<<<< HEAD
 def calculate_fscore(documents):
     index = np.arange(0, len(documents), 1)
-    index_val = random.sample(list(index), 10)
+    index_val = random.sample(list(index), 1000)
     categories = ['CRIME', 'ENTERTAINMENT', 'WORLD NEWS', 'POLITICS', 'COMEDY', 'SPORTS',
                   'BUSINESS', 'TRAVEL', 'MEDIA', 'TECH', 'RELIGION', 'SCIENCE', 'EDUCATION',
                   'ARTS & CULTURE', 'HEALTHY LIVING', 'WELLNESS', 'STYLE & BEAUTY',
@@ -213,7 +207,6 @@ def f1(y_true, y_pred):
         print("F1 = " + str(2 * (p * r) / (p + r)))
 
 
-
 def save_dictionary(dictionary):
     with open('dictionary.pickle', 'wb') as handle:
         pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -225,7 +218,4 @@ def load_dictionary():
         tokenizer = pickle.load(handle)
     return tokenizer
 
-=======
->>>>>>> 46cebbf1a2aec466beb3a4aa7a37e12df5ee6194
 # build_model()
-
