@@ -163,18 +163,19 @@ def categorize_document(documents):
 def calculate_fscore(documents):
     index = np.arange(0, len(documents), 1)
     index_val = random.sample(list(index), 1000)
-    categories = ['CRIME' 'ENTERTAINMENT' 'WORLD NEWS' 'POLITICS' 'COMEDY' 'SPORTS'
-                  'BUSINESS' 'TRAVEL' 'MEDIA' 'TECH' 'RELIGION' 'SCIENCE' 'EDUCATION'
-                  'ARTS & CULTURE' 'HEALTHY LIVING' 'WELLNESS' 'STYLE & BEAUTY'
-                  'FOOD & DRINK' 'MONEY' 'ENVIRONMENT']
+    categories = ['CRIME', 'ENTERTAINMENT', 'WORLD NEWS', 'POLITICS', 'COMEDY', 'SPORTS',
+                  'BUSINESS', 'TRAVEL', 'MEDIA', 'TECH', 'RELIGION', 'SCIENCE', 'EDUCATION',
+                  'ARTS & CULTURE', 'HEALTHY LIVING', 'WELLNESS', 'STYLE & BEAUTY',
+                  'FOOD & DRINK', 'MONEY', 'ENVIRONMENT']
     predicted_value = []
     correct_value = []
     for ind in index_val:
+        print("--------------------------------------------------------")
         print("Title: " + documents[ind].title)
         print("Description: " + documents[ind].description)
         print("Category: " + documents[ind].category)
         for n, cat in enumerate(categories):
-            print(str(n) + ": " + cat + " ")
+            print(str(n) + ": " + cat)
             if cat == documents[ind].category:
                 predicted_value.append(n)
         num = input("Please choose a category: ")

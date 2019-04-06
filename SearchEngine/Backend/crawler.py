@@ -53,9 +53,14 @@ def query_news(requery):
         documents = process_jsons(data_list)
         save_json(jsonpickle.encode(documents), documents_path)
 
+    classified_loaded = False
     if os.path.exists(terms_path) and os.path.exists(documents_processed_path) and not requery:
         terms = load_json_list(terms_path)
-        documents = load_json_list(documents_processed_path)
+        if os.path.exists(documents_classified_path):
+            classified_loaded = True
+            documents = load_json_list(documents_classified_path)
+        else:
+            documents = load_json_list(documents_processed_path)
     else:
         terms, documents = process_documents(documents)
         save_json(jsonpickle.encode(terms), terms_path)
@@ -66,7 +71,8 @@ def query_news(requery):
     print("Number of terms: " + str(len(terms)))
 
     if os.path.exists(documents_classified_path) and not requery:
-        documents = load_json_list(documents_classified_path)
+        if not classified_loaded:
+            documents = load_json_list(documents_classified_path)
     else:
         documents = categorize_document(documents)
         save_json(jsonpickle.encode(documents), documents_classified_path)
