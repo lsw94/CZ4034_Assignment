@@ -1,7 +1,8 @@
 import os
 import random
 import re
-import pickle
+
+# import pickle
 import numpy as np
 import pandas as pd  # CSV file I/O (pd.read_csv)
 from nltk.corpus import stopwords
@@ -9,9 +10,10 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.metrics import f1_score
 from sklearn.svm import LinearSVC
 
-import Classification.main as main
+# import Classification.main as main
 
 stop_words = set(stopwords.words('english'))
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -167,7 +169,8 @@ def calculate_fscore(documents):
                   'FOOD & DRINK', 'MONEY', 'ENVIRONMENT']
     predicted_value = []
     correct_value = []
-    for ind in index_val:
+    for m, ind in enumerate(index_val):
+        print(m, end="")
         print("--------------------------------------------------------")
         print("Title: " + documents[ind].title)
         print("Description: " + documents[ind].description)
@@ -177,7 +180,13 @@ def calculate_fscore(documents):
             if cat == documents[ind].category:
                 predicted_value.append(n)
         num = input("Please choose a category: ")
+        while int(num) > 19 or int(num) < 0:
+            num = input("Please choose a category: ")
         correct_value.append(int(num))
+    print(predicted_value)
+    print(correct_value)
+    print(f1_score(correct_value, predicted_value, labels=list(np.arange(20)), average=None))
+    print(f1_score(correct_value, predicted_value, labels=list(np.arange(20)), average='samples'))
     f1(correct_value, predicted_value)
     # con_matrix = confusion_matrix(correct_value, predicted_value)
 
@@ -205,17 +214,5 @@ def f1(y_true, y_pred):
         print("F1 = 0")
     else:
         print("F1 = " + str(2 * (p * r) / (p + r)))
-
-
-def save_dictionary(dictionary):
-    with open('dictionary.pickle', 'wb') as handle:
-        pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_dictionary():
-    root_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Classification")
-    with open(os.path.join(root_dir, 'dictionary.pickle'), 'rb') as handle:
-        tokenizer = pickle.load(handle)
-    return tokenizer
 
 # build_model()

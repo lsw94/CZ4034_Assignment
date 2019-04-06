@@ -55,7 +55,7 @@ def search_string(string):
     for id in reversed(doc_ids):
         doc = documents.get_document(id)
         document_return.append(doc)
-        print(doc.title)
+        # print(doc.title)
     return document_return
 
     # print("------Results-------")
@@ -78,11 +78,14 @@ def find_similar_documents(found_terms):
         for m in range(len(found_terms) - n + 1):
             terms = []
             for o in range(n):
-                if n == 1:
-                    typ = nltk.pos_tag([found_terms[m + o].term])[0][1]
-                    if "VB" in typ:
-                        continue
+                # if n == 1 and found_terms[m + o] is not None:
+                #     typ = nltk.pos_tag([found_terms[m + o].term])[0][1]
+                #     if "VB" in typ:
+                #         print("Verb Ignored: " + found_terms[m + o].term)
+                #         continue # Enable here for verb filtering
                 terms.append(found_terms[m + o])
+            # if len(terms) == 0:
+            #     continue
             tds = TermDocumentSimilarity(terms)
             term_similarity_list.append(tds)
             relevant_documents_id.extend(tds.similar_document_ids)
@@ -133,6 +136,6 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
 
 initialize()
 calculate_fscore(documents)
-# search_string("Donald Trump America Safety")
+# search_string("Singapore CPF")
 # search_string("Christchuch shooting")
 # search_string("MH370 Found Malaysia")

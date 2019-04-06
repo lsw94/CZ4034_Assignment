@@ -219,6 +219,6 @@ def load_dictionary():
     return tokenizer
 
 
-main()
+# main()
 # main()
 # predict("TEsting 1 2 3")
