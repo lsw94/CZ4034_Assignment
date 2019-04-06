@@ -8,12 +8,9 @@ import SearchEngine.Backend.lemmatizer as lemmatizer
 from SearchEngine.Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
 import jsonpickle
 
-
 # app = flask.Flask(__name__)
 documents = None
 terms = None
-
-from SearchEngine.Backend.categorize import calculate_fscore
 
 
 # @app.route("/search", methods=["GET"])
@@ -139,7 +136,6 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
 #     app.run()
 
 initialize()
-calculate_fscore(documents)
 # # categorize_document()
 # search_string("Donald Trump America Safety")
 # search_string("Christchuch shooting")

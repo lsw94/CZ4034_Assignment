@@ -1,18 +1,25 @@
-import os
-import pickle
-import random
 import re
-
-import numpy as np
-import pandas as pd  # CSV file I/O (pd.read_csv)
+import random
+import pandas as pd # CSV file I/O (pd.read_csv)
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from sklearn.externals import joblib
-from sklearn.feature_extraction.text import CountVectorizer
-# import Classification.main as main
+import numpy as np
+import os
+import Classification.main as main
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.svm import LinearSVC
-from sklearn.metrics import confusion_matrix
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.pipeline import Pipeline
+from sklearn.externals import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVC, LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score ,confusion_matrix
+from sklearn.model_selection import cross_val_score
+
 
 stop_words = set(stopwords.words('english'))
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -22,8 +29,7 @@ regex = re.compile('[^a-zA-Z0-9 ]')
 def get_words(headlines):
     headlines_onlyletters = regex.sub("", headlines)  # Remove everything other than letters
     words = headlines_onlyletters.lower().split()  # Convert to lower case, split into individual words
-    meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if
-                        word not in stop_words]  # Removing stopwords and lemmatize
+    meaningful_words = [wordnet_lemmatizer.lemmatize(word) for word in words if word not in stop_words]  # Removing stopwords and lemmatize
     return " ".join(meaningful_words)  # Joining the words
 
 
@@ -46,7 +52,7 @@ def build_model():
     news["category_code"] = news["category"].cat.codes
     news = news.reset_index(drop=True)
     dictionary = dict(enumerate(news["category"].cat.categories))
-    save_dictionary(dictionary)
+    main.save_dictionary(dictionary)
     index_for_validation = []
     for c in range(news["category_code"].nunique()):
         index = np.where(news["category_code"].values == c)[0]
@@ -78,17 +84,15 @@ def build_model():
     # X_test = np.array(X_test)
     # Y_train = np.array(Y_train)
     # Y_test = np.array(Y_test)
-    cleanHeadlines_train = []  # To append processed headlines
-    cleanHeadlines_test = []  # To append processed headlines
-    number_reviews_train = len(text_train)  # Calculating the number of reviews
-    number_reviews_test = len(text_validate)  # Calculating the number of reviews
-    for i in range(0, number_reviews_train):
-        cleanHeadline = get_words(
-            text_train[i])  # Processing the data and getting words with no special characters, numbers or html tags
+    cleanHeadlines_train = [] #To append processed headlines
+    cleanHeadlines_test = [] #To append processed headlines
+    number_reviews_train = len(text_train) #Calculating the number of reviews
+    number_reviews_test = len(text_validate) #Calculating the number of reviews
+    for i in range(0,number_reviews_train):
+        cleanHeadline = get_words(text_train[i]) #Processing the data and getting words with no special characters, numbers or html tags
         cleanHeadlines_train.append(cleanHeadline)
-    for i in range(0, number_reviews_test):
-        cleanHeadline = get_words(
-            text_validate[i])  # Processing the data and getting words with no special characters, numbers or html tags
+    for i in range(0,number_reviews_test):
+        cleanHeadline = get_words(text_validate[i]) #Processing the data and getting words with no special characters, numbers or html tags
         cleanHeadlines_test.append(cleanHeadline)
     # Pipelined process
     # processing_step = Pipeline([('vect', CountVectorizer(analyzer="word")),
@@ -149,76 +153,15 @@ def categorize_document(documents):
     tfidf_transformer = joblib.load(os.path.join("Models", "saved_tfidf_transformer.pkl"))
     dataset_title = []
     for doc_id in documents:
-        dataset_title.append(get_words(doc_id.get_strings()))
+        dataset_title.append(get_words(doc_id.get_strings))
     bagOfWords_test = vectorize.transform(dataset_title)
     test_tfidf = tfidf_transformer.transform(bagOfWords_test)
     predicted_category = load_model.predict(test_tfidf)
     for i, doc_id in enumerate(documents):
         doc_id.category = predicted_category[i]
-    return documents
     # for i, title in enumerate(dataset_title):
     #     print(title + " ----- " + predicted_category[i])
 
 
-def calculate_fscore(documents):
-    index = np.arange(0, len(documents), 1)
-    index_val = random.sample(list(index), 1000)
-    categories = ['CRIME', 'ENTERTAINMENT', 'WORLD NEWS', 'POLITICS', 'COMEDY', 'SPORTS',
-                  'BUSINESS', 'TRAVEL', 'MEDIA', 'TECH', 'RELIGION', 'SCIENCE', 'EDUCATION',
-                  'ARTS & CULTURE', 'HEALTHY LIVING', 'WELLNESS', 'STYLE & BEAUTY',
-                  'FOOD & DRINK', 'MONEY', 'ENVIRONMENT']
-    predicted_value = []
-    correct_value = []
-    for ind in index_val:
-        print("--------------------------------------------------------")
-        print("Title: " + documents[ind].title)
-        print("Description: " + documents[ind].description)
-        print("Category: " + documents[ind].category)
-        for n, cat in enumerate(categories):
-            print(str(n) + ": " + cat)
-            if cat == documents[ind].category:
-                predicted_value.append(n)
-        num = input("Please choose a category: ")
-        correct_value.append(num)
-    f1(correct_value, predicted_value)
-    # con_matrix = confusion_matrix(correct_value, predicted_value)
-
-
-def precision(y_true, y_pred):
-    i = set(y_true).intersection(y_pred)
-    len1 = len(y_pred)
-    if len1 == 0:
-        return 0
-    else:
-        return len(i) / len1
-
-
-def recall(y_true, y_pred):
-    i = set(y_true).intersection(y_pred)
-    return len(i) / len(y_true)
-
-
-def f1(y_true, y_pred):
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
-    print("Precision = " + str(p))
-    print("Recall = " + str(r))
-    if p + r == 0:
-        print("F1 = 0")
-    else:
-        print("F1 = " + str(2 * (p * r) / (p + r)))
-
-
-
-def save_dictionary(dictionary):
-    with open('dictionary.pickle', 'wb') as handle:
-        pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_dictionary():
-    root_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Classification")
-    with open(os.path.join(root_dir, 'dictionary.pickle'), 'rb') as handle:
-        tokenizer = pickle.load(handle)
-    return tokenizer
-
 # build_model()
+
