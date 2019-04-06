@@ -7,12 +7,8 @@
             $('#filtersForm').on("change", "input:checkbox", function () {
                 // if ($(this).is(':checked')) {
                 $('#filtersForm').submit();
-
-
             });
         });
-
-
         function submitFilter() {
             var formData = new FormData();
             $('#filtersForm input[type="checkbox"]').each(function () {
@@ -20,21 +16,12 @@
                     formData.append("filters[]", $.trim($(this).parent().text()));
                 }
             });
-
-            /*var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                   alert(this.responseText);
-                }
-            };
-            xhttp.open("GET", $('#filtersForm').attr('action') + formData.get("filters[]") , true);
-            xhttp.send();
-            */
-
             $.ajax({
                 url: window.location.href, // the endpoint
                 type: "POST", // http method
                 data: formData,
+                processData: false,
+                contentType: false,
                 success: function (json, textMsg, xhr) {
                     alert('AJAX called successfully');
                 },
