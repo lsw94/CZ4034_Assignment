@@ -45,11 +45,12 @@ def result_view(request):
         if not filter_form.is_valid():
             filter_form = FilterForm()
 
-        print(request.POST)
-        print("test");
-
         query = str(request.GET.get('query'))
-        results = search.search_string(query)
+        searchResults = search.search_string(query)
+        filters = request.POST.getlist('filters[]')
+
+        results = [document for document in searchResults if document.category in filters]
+
         context = {
             "form": form,
             "filter": filter_form,

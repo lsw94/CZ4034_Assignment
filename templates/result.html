@@ -22,12 +22,6 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function (json, textMsg, xhr) {
-                    alert('AJAX called successfully');
-                },
-                error: function (xhr, errmsg, err) {
-                    alert(errmsg);
-                }
             });
         }
 
@@ -102,7 +96,14 @@
 
         .results-positioning {
             margin-left: 11%;
-            margin-top: 3%;
+            margin-top: 4%;
+        }
+
+        .text-positioning{
+            margin-left: 2%;
+        }
+        .image-positioning{
+            margin-top: 1%;
         }
 
         .filter-positioning {
@@ -174,10 +175,10 @@
     <hr>
     {% for document in results %}
         <div class="row results-positioning">
-            <div class="col-md-1 col-lg-1">
+            <div class="col-md-1 col-lg-1 image-positioning">
                 <img src={{ document.image_url }} height="56" width="100">
             </div>
-            <div class="col-md-4 col-lg-4">
+            <div class="col-md-9 col-lg-9 text-positioning">
                 <a href={{ document.url }}> {{ document.title }}</a><br/>
                 <span class="url-wording">{{ document.url }}</span>
                 <br/>
