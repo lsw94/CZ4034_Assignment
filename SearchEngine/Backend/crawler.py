@@ -5,13 +5,15 @@ import jsonpickle
 import requests
 
 from SearchEngine.Backend.Objects.DocumentList import DocumentList
-from SearchEngine.Backend.lemmatizer import process_documents
 from SearchEngine.Backend.categorize import categorize_document
+from SearchEngine.Backend.lemmatizer import process_documents
 
 api_keys = ["6209cba3f204447aa019713ad53decf5", "a99a17c2950f4e66bcc4ad161b02f292"]
 sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-news", "reuters", "vice-news",
            "bloomberg", "msnbc", "daily-mail", "associated-press", "fox-news", "the-huffington-post",
-           "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
+           "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist",
+           "next-big-future", "politico", "nfl-news", "national-geographic", "news24", "mashable", "four-four-two",
+           "info-bae", "rt", "fortune"]
 # sources = ["the-economist", "bbc-news"]
 url_everything = "https://newsapi.org/v2/everything?pageSize=100&apiKey=a99a17c2950f4e66bcc4ad161b02f292&sources="
 root_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Backend")
@@ -30,6 +32,8 @@ def query_news(requery):
     if requery:
         for m, source in enumerate(sources):
             for n in range(maximum_number_of_news):
+                if os.path.exists(raw_path.replace(".json", "_" + str(m) + "_" + str(n + 1) + ".json")):
+                    break
                 response = requests.get(
                     url_everything + source + "&page=" + str(n + 1))
                 data = response.json()
@@ -76,6 +80,9 @@ def query_news(requery):
     else:
         documents = categorize_document(documents)
         save_json(jsonpickle.encode(documents), documents_classified_path)
+        terms = load_json_list(terms_path)
+        documents = load_json_list(documents_classified_path)
+
     return documents, terms
 
 
@@ -105,8 +112,22 @@ def process_jsons(datas):
     for data in datas:
         articles = data["articles"]
         for article in articles:
-            documents.add_document(article["source"]["name"], article["title"], article["description"], article["url"],
-                                   article["urlToImage"], article["publishedAt"], article["content"])
+            title = article["title"]
+            if title is None:
+                continue
+            if is_english(title):
+                documents.add_document(article["source"]["name"], article["title"], article["description"],
+                                       article["url"], article["urlToImage"], article["publishedAt"],
+                                       article["content"])
     documents.sort_by_document_id()
     documents.generate_doc_id_length_stop_positions()
     return documents
+
+
+def is_english(s):
+    try:
+        s.encode(encoding='utf-8').decode('ascii')
+    except UnicodeDecodeError:
+        return False
+    else:
+        return True

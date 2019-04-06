@@ -162,7 +162,7 @@ def categorize_document(documents):
 
 def calculate_fscore(documents):
     index = np.arange(0, len(documents), 1)
-    index_val = random.sample(list(index), 1000)
+    index_val = random.sample(list(index), 10)
     categories = ['CRIME', 'ENTERTAINMENT', 'WORLD NEWS', 'POLITICS', 'COMEDY', 'SPORTS',
                   'BUSINESS', 'TRAVEL', 'MEDIA', 'TECH', 'RELIGION', 'SCIENCE', 'EDUCATION',
                   'ARTS & CULTURE', 'HEALTHY LIVING', 'WELLNESS', 'STYLE & BEAUTY',
@@ -179,7 +179,7 @@ def calculate_fscore(documents):
             if cat == documents[ind].category:
                 predicted_value.append(n)
         num = input("Please choose a category: ")
-        correct_value.append(num)
+        correct_value.append(int(num))
     f1(correct_value, predicted_value)
     # con_matrix = confusion_matrix(correct_value, predicted_value)
 

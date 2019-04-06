@@ -1,27 +1,19 @@
 import math
 import time
-# import flask
+
+# import os
+# import sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import numpy as np
+import nltk
 # from flask import request
 import SearchEngine.Backend.crawler as crawler
 import SearchEngine.Backend.lemmatizer as lemmatizer
 from SearchEngine.Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
-import jsonpickle
-
-
-# app = flask.Flask(__name__)
-documents = None
-terms = None
-
 from SearchEngine.Backend.categorize import calculate_fscore
 
-
-# @app.route("/search", methods=["GET"])
-# def search():
-#     query = request.args.get('query')
-#     print(query)
-#     data = search_string(query)
-#     return jsonpickle.encode(data)
+documents = None
+terms = None
 
 
 def initialize():
@@ -85,6 +77,10 @@ def find_similar_documents(found_terms):
         for m in range(len(found_terms) - n + 1):
             terms = []
             for o in range(n):
+                if n == 1:
+                    typ = nltk.pos_tag([found_terms[m + o].term])[0][1]
+                    if "VB" in typ:
+                        continue
                 terms.append(found_terms[m + o])
             tds = TermDocumentSimilarity(terms)
             term_similarity_list.append(tds)
@@ -134,13 +130,9 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-# if __name__ == '__main__':
-#     initialize()
-#     app.run()
-
 initialize()
 calculate_fscore(documents)
-# # categorize_document()
+# categorize_document()
 # search_string("Donald Trump America Safety")
 # search_string("Christchuch shooting")
-# search_string("Malaysia Singapore")
+# search_string("MH370 Found Malaysia")
