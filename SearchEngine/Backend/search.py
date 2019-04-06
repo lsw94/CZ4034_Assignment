@@ -10,11 +10,28 @@ import nltk
 import SearchEngine.Backend.crawler as crawler
 import SearchEngine.Backend.lemmatizer as lemmatizer
 from SearchEngine.Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
+<<<<<<< HEAD
 from SearchEngine.Backend.categorize import calculate_fscore
 
 documents = None
 terms = None
 
+=======
+import jsonpickle
+
+# app = flask.Flask(__name__)
+documents = None
+terms = None
+
+
+# @app.route("/search", methods=["GET"])
+# def search():
+#     query = request.args.get('query')
+#     print(query)
+#     data = search_string(query)
+#     return jsonpickle.encode(data)
+
+>>>>>>> 46cebbf1a2aec466beb3a4aa7a37e12df5ee6194
 
 def initialize():
     start_t = time.time()
@@ -131,8 +148,12 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
 
 
 initialize()
+<<<<<<< HEAD
 calculate_fscore(documents)
 # categorize_document()
+=======
+# # categorize_document()
+>>>>>>> 46cebbf1a2aec466beb3a4aa7a37e12df5ee6194
 # search_string("Donald Trump America Safety")
 # search_string("Christchuch shooting")
 # search_string("MH370 Found Malaysia")

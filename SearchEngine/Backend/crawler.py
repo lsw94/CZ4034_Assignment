@@ -5,6 +5,7 @@ import jsonpickle
 import requests
 
 from SearchEngine.Backend.Objects.DocumentList import DocumentList
+<<<<<<< HEAD
 from SearchEngine.Backend.categorize import categorize_document
 from SearchEngine.Backend.lemmatizer import process_documents
 
@@ -15,13 +16,21 @@ sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-n
            "next-big-future", "politico", "nfl-news", "national-geographic", "news24", "mashable", "four-four-two",
            "info-bae", "rt", "fortune"]
 # sources = ["the-economist", "bbc-news"]
+=======
+from SearchEngine.Backend.lemmatizer import process_documents
+
+api_keys = ["6209cba3f204447aa019713ad53decf5", "a99a17c2950f4e66bcc4ad161b02f292"]
+# sources = ["the-economist", "bbc-news", "al-jazeera-english", "nbc-news", "cbs-news", "reuters", "vice-news",
+#            "bloomberg", "msnbc", "daily-mail", "associated-press", "fox-news", "the-huffington-post",
+#            "the-verge", "business-insider", "cbc-news", "ign", "buzzfeed", "newsweek", "new-scientist"]
+sources = ["the-economist", "bbc-news"]
+>>>>>>> 46cebbf1a2aec466beb3a4aa7a37e12df5ee6194
 url_everything = "https://newsapi.org/v2/everything?pageSize=100&apiKey=a99a17c2950f4e66bcc4ad161b02f292&sources="
 root_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Backend")
 data_folder = "Data"
 raw_path = os.path.join(root_dir, os.path.join(data_folder, "raw.json"))
 documents_path = os.path.join(root_dir, os.path.join(data_folder, "documents.json"))
 documents_processed_path = os.path.join(root_dir, os.path.join(data_folder, "documents_processed.json"))
-documents_classified_path = os.path.join(root_dir, os.path.join(data_folder, "documents_classified.json"))
 terms_path = os.path.join(root_dir, os.path.join(data_folder, "terms.json"))
 maximum_number_of_news = 1000
 
@@ -43,10 +52,6 @@ def query_news(requery):
                 data_list.append(data)
                 if len(data["articles"]) != 100:
                     break
-        documents = process_jsons(data_list)
-        save_json(jsonpickle.encode(documents), documents_path)
-    elif os.path.exists(documents_path) and not requery:
-        documents = load_json_list(documents_path)
     else:
         for m, source in enumerate(sources):
             for n in range(maximum_number_of_news):
@@ -54,25 +59,26 @@ def query_news(requery):
                     break
                 data = load_json(raw_path.replace(".json", "_" + str(m) + "_" + str(n + 1) + ".json"))
                 data_list.append(data)
+    if os.path.exists(documents_path) and not requery:
+        documents = load_json_list(documents_path)
+    else:
         documents = process_jsons(data_list)
         save_json(jsonpickle.encode(documents), documents_path)
 
-    classified_loaded = False
     if os.path.exists(terms_path) and os.path.exists(documents_processed_path) and not requery:
         terms = load_json_list(terms_path)
-        if os.path.exists(documents_classified_path):
-            classified_loaded = True
-            documents = load_json_list(documents_classified_path)
-        else:
-            documents = load_json_list(documents_processed_path)
+        documents = load_json_list(documents_processed_path)
     else:
         terms, documents = process_documents(documents)
+
         save_json(jsonpickle.encode(terms), terms_path)
         save_json(jsonpickle.encode(documents), documents_processed_path)
+
 
     print("-----Database size-----")
     print("Number of documents: " + str(len(documents)))
     print("Number of terms: " + str(len(terms)))
+<<<<<<< HEAD
 
     if os.path.exists(documents_classified_path) and not requery:
         if not classified_loaded:
@@ -83,6 +89,8 @@ def query_news(requery):
         terms = load_json_list(terms_path)
         documents = load_json_list(documents_classified_path)
 
+=======
+>>>>>>> 46cebbf1a2aec466beb3a4aa7a37e12df5ee6194
     return documents, terms
 
 
