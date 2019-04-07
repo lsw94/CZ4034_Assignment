@@ -46,10 +46,13 @@ def result_view(request):
             filter_form = FilterForm()
 
         query = str(request.GET.get('query'))
-        searchResults = search.search_string(query)
+        searchresults = search.search_string(query)
         filters = request.POST.getlist('filters[]')
 
-        results = [document for document in searchResults if document.category in filters]
+        if not filters:
+            results = searchresults
+        else:
+            results = [document for document in searchresults if document.category in filters]
 
         context = {
             "form": form,
@@ -59,7 +62,5 @@ def result_view(request):
 
     else:
         return redirect('/')
-
-
 
     return render(request, "result.html", context)

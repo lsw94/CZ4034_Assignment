@@ -4,27 +4,23 @@
 {% block content %}
     <script>
         $(document).ready(function () {
-            $('#filtersForm').on("change", "input:checkbox", function () {
-                // if ($(this).is(':checked')) {
-                $('#filtersForm').submit();
+            $('#filtersForm input:checkbox ').on("change", function(e) {
+                e.stopImmediatePropagation();
+                var formData = new FormData();
+                $('#filtersForm input[type="checkbox"]').each(function () {
+                    if ($(this).is(':checked')) {
+                        formData.append("filters[]", $.trim($(this).parent().text().toUpperCase()));
+                    }
+                });
+                $.ajax({
+                    url: window.location.href, // the endpoint
+                    type: "POST", // http method
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                });
             });
         });
-        function submitFilter() {
-            var formData = new FormData();
-            $('#filtersForm input[type="checkbox"]').each(function () {
-                if ($(this).is(':checked')) {
-                    formData.append("filters[]", $.trim($(this).parent().text()));
-                }
-            });
-            $.ajax({
-                url: window.location.href, // the endpoint
-                type: "POST", // http method
-                data: formData,
-                processData: false,
-                contentType: false,
-            });
-        }
-
 
          function getCookie(name) {
             var cookieValue = null;
@@ -56,37 +52,6 @@
                 }
             }
         });
-
-
-        /* if ($(this).is(':checked')) {
-
-             $("#filtersForm").submit();
-
-         }
-
-     });*/
-
-        //function submitFilter() {
-        //  alert("test");
-        /*var formData = new FormData();
-        $('#filtersForm input[type="checkbox"]').each(function () {
-           if ($(this).is(':checked')) {
-               var name = $(this).attr('name');
-               formData.append("filters[]", name);
-           }
-        });
-
-        $.ajax({
-            type: 'post',
-            url: window.location.href,
-            data: formData,
-            success: function (response) {
-                $('#success__para').html("You have submitted successfully");
-            }
-        });
-
-        return false;*/
-        //}
     </script>
     <style>
         .top-positioning {
@@ -150,7 +115,7 @@
 
                         <div class="container" style="margin-top: 1%">
                             <span class="text-uppercase" style="margin-left:20px; color: #28a745">Categories</span>
-                            <form id="filtersForm" method="POST" class="row" style="margin-top:1%" onsubmit="submitFilter()">
+                            <form id="filtersForm" method="post" class="row" style="margin-top:1%">
                                 {% csrf_token %}
                                 {% for item in filter %}
                                     {% if forloop.counter == 1 or forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 %}
