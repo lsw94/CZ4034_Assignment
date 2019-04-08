@@ -1,7 +1,7 @@
 import math
 import re
 import time
-
+from nltk.corpus import wordnet
 # import os
 # import sys
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -80,7 +80,7 @@ def search_string(string):
         end_t = time.time()
         print("Search: %.4fs" % (end_t - start_t))
         print("Number of document: " + str(len(document_return)))
-        return document_return, suggested_search
+        return document_return, suggested_search, (end_t - start_t)
 
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
@@ -94,7 +94,7 @@ def search_string(string):
     end_t = time.time()
     print("Search: %.4fs" % (end_t - start_t))
     print("Number of document: " + str(len(document_return)))
-    return document_return, suggested_search
+    return document_return, suggested_search, (end_t - start_t)
 
     # print("------Results-------")
     # for n, spis in enumerate(similar_positional_index):
