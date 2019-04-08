@@ -32,7 +32,7 @@ def search_string(string):
     start_t = time.time()
     global documents, terms
     global num_words_search
-    reset_num_words = False
+    one_word_seach = False
     fixed_search = False
     if "\"" in string:
         start_end_position = [pos for pos, char in enumerate(string) if char == "\""]
@@ -51,13 +51,12 @@ def search_string(string):
         suggested_search = ""
 
     if len(search_terms) < num_words_search:
-        num_words_search = 1
-        reset_num_words = True
+        one_word_seach = True
     found_terms = []
     for term in search_terms:
         found = terms.get_term(term)
         found_terms.append(found)
-    similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms, fixed_search)
+    similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms, fixed_search, one_word_seach)
     if fixed_search:
         similar_pi = similar_positional_index[len(search_terms) - num_words_search][0]
         in_order_position = [pos for pos, io in enumerate(similar_pi.similar_document_in_order) if io is True]
@@ -87,8 +86,6 @@ def search_string(string):
         doc = documents.get_document(id)
         document_return.append(doc)
         # print(doc.title)
-    if reset_num_words:
-        num_words_search = 2
     end_t = time.time()
     print("Search: %.2fs" % (end_t - start_t))
     print("Number of document: " + str(len(document_return)))
@@ -105,11 +102,13 @@ def search_string(string):
     #         print("...")
 
 
-def find_similar_documents(found_terms, fixed_search):
+def find_similar_documents(found_terms, fixed_search, one_word_search):
     number_of_terms = len(found_terms)
     term_similarity_list_num_words = []
     relevant_documents_id = []
-    if fixed_search:
+    if one_word_search:
+        start = 1
+    elif fixed_search:
         start = number_of_terms
     else:
         start = num_words_search
