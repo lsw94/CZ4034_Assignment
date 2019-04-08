@@ -98,10 +98,13 @@
 
     </div>
 
+    {% if auto_correct != "" %}
+        <div class="row top-positioning">
+            <a href="{% url 'search' %}?query={{auto_correct}}">Did you mean {{auto_correct}}?</a>
+        </div>
+    {% endif %}
+
     <nav class="navbar navbar-expand-lg navbar-light filter-positioning">
-        {#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">#}
-        {#    <span class="navbar-toggler-icon"></span>#}
-        {#  </button>#}
 
         <div class="navbar-collapse filter-wording" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
