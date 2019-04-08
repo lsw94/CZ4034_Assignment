@@ -6,7 +6,8 @@ import time
 # import sys
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import numpy as np
-from pattern.en import suggest
+# from pattern.en import suggest
+from spellchecker import SpellChecker
 
 import SearchEngine.Backend.crawler as crawler
 import SearchEngine.Backend.lemmatizer as lemmatizer
@@ -16,7 +17,8 @@ from SearchEngine.Backend.lemmatizer import tokenize
 documents = None
 terms = None
 
-pattern = re.compile(r"(.)\1{2,}")
+# pattern = re.compile(r"(.)\1{2,}")
+spell = SpellChecker()
 num_words_search = 2
 
 
@@ -176,18 +178,33 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
+# def spelling_check(words):
+#     try:
+#         correct_words = []
+#         for word in words:
+#             word_wlf = pattern.sub(r"\1\1", word)
+#             suggestions = suggest(word_wlf)
+#             if suggestions[0][1] > 0.65:
+#                 correct_word = suggestions[0][0]
+#             else:
+#                 correct_word = word
+#             correct_words.append(correct_word)
+#
+#         return correct_words
+#     except Exception:
+#         return None
+
+
 def spelling_check(words):
     try:
         correct_words = []
         for word in words:
-            word_wlf = pattern.sub(r"\1\1", word)
-            suggestions = suggest(word_wlf)
-            if suggestions[0][1] > 0.65:
-                correct_word = suggestions[0][0]
+            word_process = spell.unknown([word])
+            if len(word_process) == 0:
+                correct_words.append(word)
             else:
-                correct_word = word
-            correct_words.append(correct_word)
-
+                corrected = spell.correction(next(iter(word_process)))
+                correct_words.append(corrected)
         return correct_words
     except Exception:
         return None
@@ -197,7 +214,7 @@ print("Initializing Backend...")
 initialize()
 print("Done Initializing Backend...")
 # calculate_fscore(documents)
-# search_string("Singapore CPF")
-# search_string("\"Men Killed\"")
+# search_string("Laplace Trnsform")
+# search_string("\  "Men Killed\"")
 # search_string("\"Men LA What\"")
 # search_string("Killlled")
