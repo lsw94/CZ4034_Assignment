@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 # from Backend.search import search_string
 from .forms import SearchForm, FilterForm
 import SearchEngine.Backend.search as search
+import time
 # from Backend import
 # Create your views here.
 
@@ -17,6 +18,7 @@ def index(request):
 
 
 def result_view(request):
+    start = time.time()
     if request.method == 'GET':
         form = SearchForm(request.GET)
         filter_form = FilterForm(request.GET)
@@ -67,4 +69,6 @@ def result_view(request):
     else:
         return redirect('/')
 
+    duration = time.time() - start
+    print("Search: %.4fs" % duration)
     return render(request, "result.html", context)
