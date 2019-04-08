@@ -5,28 +5,30 @@
 {% block content %}
     <script>
         $(document).ready(function () {
-            $('#filtersForm input:checkbox ').on("change", function(e) {
+            $('#filtersForm input:checkbox ').on("change", function (e) {
                 e.stopImmediatePropagation();
                 var formData = new FormData();
-                $('#filtersForm input[type="checkbox"]').each(function () {
+                $('#filtersForm input:checkbox').each(function () {
                     if ($(this).is(':checked')) {
                         formData.append("filters[]", $.trim($(this).parent().text().toUpperCase()));
                     }
                 });
                 $.ajax({
-                    url: window.location.href,
+                    url: $(this).attr('action'),
                     type: "POST", // http method
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(data){
-                        $('body').html(data);
+                    success: function (data) {
+                        let updateDiv = jQuery(data).find('#result_display').children();
+                       // let retainDiv = jqObj.find('#result_display');
+                        $('#result_display').html(updateDiv);
                     }
                 });
             });
         });
 
-         function getCookie(name) {
+        function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 var cookies = document.cookie.split(';');
@@ -60,7 +62,7 @@
     <style>
         .top-positioning {
             margin-left: 11%;
-            margin-top: 3%;
+            margin-top: 2%;
         }
 
         .results-positioning {
@@ -68,10 +70,11 @@
             margin-top: 4%;
         }
 
-        .text-positioning{
+        .text-positioning {
             margin-left: 2%;
         }
-        .image-positioning{
+
+        .image-positioning {
             margin-top: 1%;
         }
 
@@ -80,7 +83,7 @@
         }
 
         .filter-wording {
-            margin-left: 9%;
+            margin-left: 10%;
         }
 
         .url-wording {
@@ -91,9 +94,9 @@
         }
 
     </style>
-
     <div class="row top-positioning">
 
+        <a href="{% url 'index' %}"><img src="{% static 'img/logo.png' %}" height="90" width="90"></a>
         <form class="form-check-inline col-lg-5 col-md-6" method="GET" action="{% url 'search' %}">
             {{ form }}
             <button class="btn btn-outline-success" type="submit">Search</button>
@@ -101,12 +104,6 @@
         </form>
 
     </div>
-
-    {% if auto_correct != "" %}
-        <div class="row top-positioning">
-            <a href="{% url 'search' %}?query={{auto_correct}}">Did you mean {{auto_correct}}?</a>
-        </div>
-    {% endif %}
 
     <nav class="navbar navbar-expand-lg navbar-light filter-positioning">
 
@@ -122,7 +119,8 @@
 
                         <div class="container" style="margin-top: 1%">
                             <span class="text-uppercase" style="margin-left:20px; color: #28a745">Categories</span>
-                            <form id="filtersForm" method="post" class="row" action="{% url 'search' %}" style="margin-top:1%">
+                            <form id="filtersForm" method="post" class="row" action="{% url 'search' %}"
+                                  style="margin-top:1%">
                                 {% csrf_token %}
                                 {% for item in filter %}
                                     {% if forloop.counter == 1 or forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 %}
@@ -145,27 +143,34 @@
         </div>
     </nav>
     <hr>
-    <div id="result_display">
-    {% for document in results %}
-        <div class="row results-positioning">
-            <div class="col-md-1 col-lg-1 image-positioning">
-                {% if document.image_url %}
-                 <img src={{ document.image_url }} height="56" width="100">
-
-                {% else %}
-                    <img src="{% static 'img/noimg.png' %}" height="56" width="100">
-                {% endif %}
-            </div>
-            <div class="col-md-9 col-lg-9 text-positioning">
-                <a href={{ document.url }}> {{ document.title }}</a><br/>
-                <span class="url-wording">{{ document.url }}</span>
-                <br/>
-                {{ document.description }}
-                {{ document.category }}
-
-            </div>
+    {% if auto_correct != "" %}
+        <div class="row top-positioning">
+            <a href="{% url 'search' %}?query={{ auto_correct }}">Did you mean {{ auto_correct }}?</a>
         </div>
-    {% endfor %}
+    {% endif %}
+    <div id="result_display">
+        {% for document in results %}
+            <div class="row results-positioning">
+                <div class="col-md-1 col-lg-1 image-positioning">
+                    {% if document.image_url %}
+                        <img src={{ document.image_url }} height="56" width="100">
+
+                    {% else %}
+                        <img src="{% static 'img/noimg.png' %}" height="56" width="100">
+                    {% endif %}
+                </div>
+                <div class="col-md-9 col-lg-9 text-positioning">
+                   <small> Category: {{ document.category }}</small>
+                    <br/>
+                    <a href={{ document.url }}> {{ document.title }}</a><br/>
+                    <span class="url-wording">{{ document.url|truncatechars:70 }}</span>
+                    <br/>
+                    {{ document.description }}
+
+
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
 

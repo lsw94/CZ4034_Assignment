@@ -6,26 +6,27 @@
 {% block content %}
     <style>
         .index-searchform {
-            position: fixed;
-            left: 29%;
-            top: 55%;
+            position: relative;
+            left: 7%;
+            margin-top: 28%;
 
         }
-    .logo-searchform{
-            position: fixed;
-            left: 35%;
-            top: 10%;
+
+        .logo {
+            position: relative;
+            left: 37%;
+            margin-top: -24%;
 
         }
 
 
     </style>
 
-    <img src="{% static 'img/logo.png' %}" height="300" width="300" class="logo-searchform">
+    <img src="{% static 'img/logo.png' %}" height="300" width="300" class="logo">
 
-        <form class="form-check-inline col-lg-5 col-md-6 index-searchform" method="get" action={% url 'search' %}>
-            {{ form }}
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+    <form class="index-searchform form-check-inline col-lg-5 col-md-6 " method="get" action={% url 'search' %}>
+        {{ form }}
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
 
 {% endblock %}
