@@ -52,7 +52,7 @@ def search_string(string):
         suggested_search = " ".join(suggested_terms)
         print("Corrected Search: ")
         print(suggested_search)
-        if suggested_search == string.lower():
+        if suggested_search.lower().strip() == string.lower().strip():
             suggested_search = ""
 
     if len(search_terms) < num_words_search:
