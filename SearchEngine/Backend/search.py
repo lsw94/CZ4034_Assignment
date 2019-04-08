@@ -1,22 +1,20 @@
 import math
-import re
 import time
 
+import nltk
 # import os
 # import sys
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import numpy as np
-from pattern.en import suggest
-from SearchEngine.Backend.lemmatizer import tokenize
+
+# from flask import request
 import SearchEngine.Backend.crawler as crawler
 import SearchEngine.Backend.lemmatizer as lemmatizer
 from SearchEngine.Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
+from SearchEngine.Backend.categorize import calculate_fscore
 
 documents = None
 terms = None
-
-pattern = re.compile(r"(.)\1{2,}")
-num_words_search = 2
 
 
 def initialize():
@@ -30,66 +28,35 @@ def initialize():
 def search_string(string):
     start_t = time.time()
     global documents, terms
-    global num_words_search
-    reset_num_words = False
-    fixed_search = False
-    if "\"" in string:
-        start_end_position = [pos for pos, char in enumerate(string) if char == "\""]
-        if len(start_end_position) == 2:
-            string = string[start_end_position[0] + 1:start_end_position[1]]
-            fixed_search = True
     search_terms = lemmatizer.process_string(string)
-
-    print("Original Search: ")
-    print(string)
-    suggested_terms = spelling_check(tokenize(string))
-    suggested_search = " ".join(suggested_terms)
-    print("Corrected Search: ")
-    print(suggested_search)
-    if suggested_search == string:
-        suggested_search = ""
-
-    if len(search_terms) < num_words_search:
-        num_words_search = 1
-        reset_num_words = True
     found_terms = []
     for term in search_terms:
         found = terms.get_term(term)
         found_terms.append(found)
     similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms)
-    if fixed_search:
-        similar_pi = similar_positional_index[len(search_terms) - num_words_search][0]
-        in_order_position = [pos for pos, io in enumerate(similar_pi.similar_document_in_order) if io is True]
-        relevent_documents_ids = list(np.asarray(similar_pi.similar_document_ids)[in_order_position])
     documents_tfidf_dict = get_document_query_tfidf_score(found_terms, relevent_documents_ids)
-
+    end_t = time.time()
     doc_ids = []
     tfidf_score = []
 
-    if documents_tfidf_dict is None or len(documents_tfidf_dict) == 0:
+    if documents_tfidf_dict is None:
         document_return = []
         for id in relevent_documents_ids:
             doc = documents.get_document(id)
             document_return.append(doc)
-
-        end_t = time.time()
-        print("Search: %.2fs" % (end_t - start_t))
         return document_return
 
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
         tfidf_score.append(value)
     tfidf_score, doc_ids = zip(*sorted(zip(tfidf_score, doc_ids)))
+    print("Search: %.2fs" % (end_t - start_t))
     document_return = []
     for id in reversed(doc_ids):
         doc = documents.get_document(id)
         document_return.append(doc)
         # print(doc.title)
-    if reset_num_words:
-        num_words_search = 2
-    end_t = time.time()
-    print("Search: %.2fs" % (end_t - start_t))
-    return document_return, suggested_search
+    return document_return
 
     # print("------Results-------")
     # for n, spis in enumerate(similar_positional_index):
@@ -106,7 +73,7 @@ def find_similar_documents(found_terms):
     number_of_terms = len(found_terms)
     term_similarity_list_num_words = []
     relevant_documents_id = []
-    for n in range(num_words_search, number_of_terms + 1):
+    for n in range(1, number_of_terms + 1):
         term_similarity_list = []
         for m in range(len(found_terms) - n + 1):
             terms = []
@@ -167,23 +134,8 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
     return document_tfidf_scores
 
 
-def spelling_check(words):
-    correct_words = []
-    for word in words:
-        word_wlf = pattern.sub(r"\1\1", word)
-        suggestions = suggest(word_wlf)
-        if suggestions[0][1] > 0.65:
-            correct_word = suggestions[0][0]
-        else:
-            correct_word = word
-        correct_words.append(correct_word)
-
-    return correct_words
-
-
 initialize()
-# calculate_fscore(documents)
+calculate_fscore(documents)
 # search_string("Singapore CPF")
-# search_string("\"Men Killed\"")
-# search_string("\"Men LA What\"")
-# search_string("Killlled")
+# search_string("Christchuch shooting")
+# search_string("MH370 Found Malaysia")
