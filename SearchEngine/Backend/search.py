@@ -56,7 +56,7 @@ def search_string(string):
     for term in search_terms:
         found = terms.get_term(term)
         found_terms.append(found)
-    similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms)
+    similar_positional_index, relevent_documents_ids = find_similar_documents(found_terms, fixed_search)
     if fixed_search:
         similar_pi = similar_positional_index[len(search_terms) - num_words_search][0]
         in_order_position = [pos for pos, io in enumerate(similar_pi.similar_document_in_order) if io is True]
@@ -74,7 +74,8 @@ def search_string(string):
 
         end_t = time.time()
         print("Search: %.2fs" % (end_t - start_t))
-        return document_return
+        print("Number of document: " + str(len(document_return)))
+        return document_return#, suggested_search
 
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
@@ -89,7 +90,8 @@ def search_string(string):
         num_words_search = 2
     end_t = time.time()
     print("Search: %.2fs" % (end_t - start_t))
-    return document_return, suggested_search
+    print("Number of document: " + str(len(document_return)))
+    return document_return#, suggested_search
 
     # print("------Results-------")
     # for n, spis in enumerate(similar_positional_index):
@@ -102,11 +104,15 @@ def search_string(string):
     #         print("...")
 
 
-def find_similar_documents(found_terms):
+def find_similar_documents(found_terms, fixed_search):
     number_of_terms = len(found_terms)
     term_similarity_list_num_words = []
     relevant_documents_id = []
-    for n in range(num_words_search, number_of_terms + 1):
+    if fixed_search:
+        start = number_of_terms
+    else:
+        start = num_words_search
+    for n in range(start, number_of_terms + 1):
         term_similarity_list = []
         for m in range(len(found_terms) - n + 1):
             terms = []
