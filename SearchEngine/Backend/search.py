@@ -44,11 +44,14 @@ def search_string(string):
     print("Original Search: ")
     print(string)
     suggested_terms = spelling_check(tokenize(string))
-    suggested_search = " ".join(suggested_terms)
-    print("Corrected Search: ")
-    print(suggested_search)
-    if suggested_search == string:
+    if suggested_terms is None:
         suggested_search = ""
+    else:
+        suggested_search = " ".join(suggested_terms)
+        print("Corrected Search: ")
+        print(suggested_search)
+        if suggested_search == string:
+            suggested_search = ""
 
     if len(search_terms) < num_words_search:
         one_word_seach = True
@@ -73,7 +76,7 @@ def search_string(string):
             document_return.append(doc)
 
         end_t = time.time()
-        print("Search: %.2fs" % (end_t - start_t))
+        print("Search: %.4fs" % (end_t - start_t))
         print("Number of document: " + str(len(document_return)))
         return document_return, suggested_search
 
@@ -87,7 +90,7 @@ def search_string(string):
         document_return.append(doc)
         # print(doc.title)
     end_t = time.time()
-    print("Search: %.2fs" % (end_t - start_t))
+    print("Search: %.4fs" % (end_t - start_t))
     print("Number of document: " + str(len(document_return)))
     return document_return, suggested_search
 
@@ -174,17 +177,20 @@ def get_document_query_tfidf_score(query, relevant_document_ids):
 
 
 def spelling_check(words):
-    correct_words = []
-    for word in words:
-        word_wlf = pattern.sub(r"\1\1", word)
-        suggestions = suggest(word_wlf)
-        if suggestions[0][1] > 0.65:
-            correct_word = suggestions[0][0]
-        else:
-            correct_word = word
-        correct_words.append(correct_word)
+    try:
+        correct_words = []
+        for word in words:
+            word_wlf = pattern.sub(r"\1\1", word)
+            suggestions = suggest(word_wlf)
+            if suggestions[0][1] > 0.65:
+                correct_word = suggestions[0][0]
+            else:
+                correct_word = word
+            correct_words.append(correct_word)
 
-    return correct_words
+        return correct_words
+    except Exception:
+        return None
 
 
 print("Initializing Backend...")
