@@ -7,10 +7,11 @@ import time
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import numpy as np
 from pattern.en import suggest
-from SearchEngine.Backend.lemmatizer import tokenize
+
 import SearchEngine.Backend.crawler as crawler
 import SearchEngine.Backend.lemmatizer as lemmatizer
 from SearchEngine.Backend.Objects.TermDocumentSimilarity import TermDocumentSimilarity
+from SearchEngine.Backend.lemmatizer import tokenize
 
 documents = None
 terms = None
@@ -75,7 +76,7 @@ def search_string(string):
         end_t = time.time()
         print("Search: %.2fs" % (end_t - start_t))
         print("Number of document: " + str(len(document_return)))
-        return document_return#, suggested_search
+        return document_return, suggested_search
 
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
@@ -91,7 +92,7 @@ def search_string(string):
     end_t = time.time()
     print("Search: %.2fs" % (end_t - start_t))
     print("Number of document: " + str(len(document_return)))
-    return document_return#, suggested_search
+    return document_return, suggested_search
 
     # print("------Results-------")
     # for n, spis in enumerate(similar_positional_index):
@@ -187,7 +188,9 @@ def spelling_check(words):
     return correct_words
 
 
+print("Initializing Backend...")
 initialize()
+print("Done Initializing Backend...")
 # calculate_fscore(documents)
 # search_string("Singapore CPF")
 # search_string("\"Men Killed\"")
