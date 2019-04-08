@@ -30,15 +30,13 @@ def result_view(request):
        # filters = request.GET.get('filters')
         print(request.GET)
 
-        auto_correct = "test"
-
         query = str(request.GET.get('query'))
-        results = search.search_string(query)
+        results, auto_correct = search.search_string(query)
         context = {
             "form": form,
             "filter": filter_form,
             "results": results,
-            "autocorrect": auto_correct
+            "auto_correct": auto_correct
         }
 
     elif request.method == 'POST':
@@ -49,11 +47,9 @@ def result_view(request):
             filter_form = FilterForm()
 
         query = str(request.GET.get('query'))
-        searchresults = search.search_string(query)
+        searchresults, auto_correct = search.search_string(query)
         filters = request.POST.getlist('filters[]')
         print(filters)
-
-        auto_correct = "test"
 
         if not filters:
             results = searchresults
@@ -61,12 +57,11 @@ def result_view(request):
             results = [document for document in searchresults if document.category in filters]
             print(results)
 
-
         context = {
             "form": form,
             "filter": filter_form,
             "results": results,
-            "autocorrect": auto_correct
+            "auto_correct": auto_correct
         }
 
     else:
