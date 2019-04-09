@@ -77,6 +77,10 @@
         .image-positioning {
             margin-top: 1%;
         }
+        .page-positioning {
+            margin-left: 11%;
+            margin-top: 3%;
+        }
 
         .filter-positioning {
             margin-top: 1%;
@@ -143,11 +147,18 @@
         </div>
     </nav>
     <hr>
+    {% if duration %}
+        <div class="row top-positioning">
+        <small>{{ duration }} seconds</small>
+        </div>
+    {% endif %}
     {% if auto_correct != "" %}
         <div class="row top-positioning">
             <a href="{% url 'search' %}?query={{ auto_correct }}">Did you mean {{ auto_correct }}?</a>
         </div>
+
     {% endif %}
+
     <div id="result_display">
         {% for document in results %}
             <div class="row results-positioning">
@@ -169,9 +180,26 @@
 
 
                 </div>
-            </div>
+              </div>
         {% endfor %}
-    </div>
 
+    <div id="pagination" class="page-positioning">
+        <span class="step-links">
+        {% if results.has_previous %}
+            <a href="{{request.get_full_path}}&page=1"}}>&laquo; first</a>
+            <a href="{{request.get_full_path}}&page={{ results.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ results.number }} of {{ results.paginator.num_pages }}.
+        </span>
+
+        {% if results.has_next %}
+            <a href="{{request.get_full_path}}&page={{ results.next_page_number }}">next</a>
+            <a href="{{request.get_full_path}}&page={{ results.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+    </div>
+    </div>
 
 {% endblock %}

@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.http import HttpResponseRedirect
@@ -13,12 +14,11 @@ import time
 def index(request):
     if request.method == "GET":
         form = SearchForm()
-
+        print(request.GET)
         return render(request, "index.html", {'form': form})
 
 
 def result_view(request):
-    start = time.time()
     if request.method == 'GET':
         form = SearchForm(request.GET)
         filter_form = FilterForm(request.GET)
@@ -30,15 +30,21 @@ def result_view(request):
             filter_form = FilterForm()
 
        # filters = request.GET.get('filters')
-        print(request.GET)
+
+       # print(request.GET)
 
         query = str(request.GET.get('query'))
-        results, auto_correct = search.search_string(query)
+        results, auto_correct, duration = search.search_string(query)
+        paginator = Paginator(results, 20) # show 20 page
+        page = request.GET.get('page')
+        page_results = paginator.get_page(page)
+
         context = {
             "form": form,
             "filter": filter_form,
-            "results": results,
-            "auto_correct": auto_correct
+            "results": page_results,
+            "auto_correct": auto_correct,
+            "duration": duration
         }
 
     elif request.method == 'POST':
@@ -49,7 +55,7 @@ def result_view(request):
             filter_form = FilterForm()
 
         query = str(request.GET.get('query'))
-        searchresults, auto_correct = search.search_string(query)
+        searchresults, auto_correct, duration = search.search_string(query)
         filters = request.POST.getlist('filters[]')
         print(filters)
 
@@ -59,16 +65,19 @@ def result_view(request):
             results = [document for document in searchresults if document.category in filters]
             print(results)
 
+        paginator = Paginator(results, 20)  # show 20 page
+        page = request.GET.get('page')
+        page_results = paginator.get_page(page)
+
         context = {
             "form": form,
             "filter": filter_form,
-            "results": results,
-            "auto_correct": auto_correct
+            "results": page_results,
+            "auto_correct": auto_correct,
+            "duration": duration
         }
 
     else:
         return redirect('/')
 
-    duration = time.time() - start
-    print("Search: %.4fs" % duration)
     return render(request, "result.html", context)
