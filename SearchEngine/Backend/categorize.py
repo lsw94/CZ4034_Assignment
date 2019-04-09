@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import time
 
 # import pickle
 import numpy as np
@@ -12,6 +13,13 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.naive_bayes import MultinomialNB
+
 
 # import Classification.main as main
 
@@ -47,7 +55,7 @@ def build_model():
     news["category_code"] = news["category"].cat.codes
     news = news.reset_index(drop=True)
     dictionary = dict(enumerate(news["category"].cat.categories))
-    main.save_dictionary(dictionary)
+    #main.save_dictionary(dictionary)
     index_for_validation = []
     for c in range(news["category_code"].nunique()):
         index = np.where(news["category_code"].values == c)[0]
@@ -119,20 +127,24 @@ def build_model():
 
     results = []
     names = []
+    times = []
     for name, model in models:
         # model_act = GridSearchCV(model, param_grid)
         # model_act.fit(X_train_tfidf, labels_train)
         # print(model_act.best_score_)
         # print(model_act.best_params_)
         # model_act.score(X_test_tfidf, labels_validate)
+        start_time = time.time()
         model.fit(X_train_tfidf, labels_train)
+        elapsed_time = time.time() - start_time
         results.append(model.score(X_test_tfidf, labels_validate))
         names.append(name)
+        times.append(elapsed_time)
         # joblib.dump(model, 'Models/saved_model.pkl')
     for i in range(len(names)):
-        print(names[i], results[i])
-    joblib.dump(vectorize, "Models/saved_CounterVectorizer.pkl")
-    joblib.dump(tfidf_transformer, "Models/saved_tfidf_transformer.pkl")
+        print(names[i], results[i], times[i])
+    # joblib.dump(vectorize, "Models/saved_CounterVectorizer.pkl")
+    # joblib.dump(tfidf_transformer, "Models/saved_tfidf_transformer.pkl")
     # nb = MultinomialNB()
     # nb.fit(X_train_tfidf, Y_train)
     # print(nb.score(X_test_tfidf, Y_test))
@@ -150,7 +162,7 @@ def categorize_document(documents):
     tfidf_transformer = joblib.load(os.path.join("Models", "saved_tfidf_transformer.pkl"))
     dataset_title = []
     for doc_id in documents:
-        dataset_title.append(get_words(doc_id.get_strings))
+        dataset_title.append(get_words(doc_id.get_strings()))
     bagOfWords_test = vectorize.transform(dataset_title)
     test_tfidf = tfidf_transformer.transform(bagOfWords_test)
     predicted_category = load_model.predict(test_tfidf)
@@ -297,5 +309,5 @@ def print_result():
     print("F-Score:")
     print(vals[2])
 
-
+build_model()
 # print_result()
