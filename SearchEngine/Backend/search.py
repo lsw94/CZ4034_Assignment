@@ -72,9 +72,13 @@ def search_string(string):
 
     if documents_tfidf_dict is None or len(documents_tfidf_dict) == 0:
         document_return = []
+        terms_freq = []
+        term_id = found_terms[0].id
         for id in relevent_documents_ids:
             doc = documents.get_document(id)
+            terms_freq.append(doc.tfidfs.get_tfidf_norm_of_term_id(term_id))
             document_return.append(doc)
+        document_return = [x for _,x in sorted(zip(terms_freq,document_return), key=lambda pair: pair[0], reverse=True)]
 
         end_t = time.time()
         print("Search: %.4fs" % (end_t - start_t))
@@ -84,7 +88,8 @@ def search_string(string):
     for k, value in documents_tfidf_dict.items():
         doc_ids.append(k)
         tfidf_score.append(value)
-    tfidf_score, doc_ids = zip(*sorted(zip(tfidf_score, doc_ids)))
+    # tfidf_score, doc_ids = zip(*sorted(zip(tfidf_score, doc_ids)))
+    doc_ids = [x for _, x in sorted(zip(tfidf_score, doc_ids), key=lambda pair: pair[0])]
     document_return = []
     for id in reversed(doc_ids):
         doc = documents.get_document(id)
@@ -213,7 +218,7 @@ print("Initializing Backend...")
 initialize()
 print("Done Initializing Backend...")
 # calculate_fscore(documents)
-# search_string("Laplace Trnsform")
+search_string("Testing Testing Testing")
 # search_string("\  "Men Killed\"")
 # search_string("\"Men LA What\"")
 # search_string("Killlled")
