@@ -78,8 +78,9 @@
             margin-top: 1%;
         }
         .page-positioning {
-            margin-left: 11%;
+            text-align: center;
             margin-top: 3%;
+            margin-bottom: 4%;
         }
 
         .filter-positioning {
@@ -94,7 +95,23 @@
             font-size: 0.9em;
             font-family: "Times New Roman", Times, serif;
             color: #28a745;
+        }
 
+        .page-positioning a {
+            color: black;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .page-positioning a.active {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .page-positioning a:hover:not(.active) {
+            background-color: #ddd;
+            border-radius: 5px;
         }
 
     </style>
@@ -183,21 +200,22 @@
               </div>
         {% endfor %}
 
-    <div id="pagination" class="page-positioning">
+    <div class="page-positioning">
         <span class="step-links">
-        {% if results.has_previous %}
-            <a href="{{request.get_full_path}}&page=1"}}>&laquo; first</a>
-            <a href="{{request.get_full_path}}&page={{ results.previous_page_number }}">previous</a>
-        {% endif %}
 
-        <span class="current">
-            Page {{ results.number }} of {{ results.paginator.num_pages }}.
-        </span>
+            {% if results.has_previous %}
+                <a href="{{request.get_full_path}}&page=1"}}>&laquo;</a>
+                <a href="{{request.get_full_path}}&page={{ results.previous_page_number }}">{{ results.previous_page_number }}</a>
+            {% endif %}
 
-        {% if results.has_next %}
-            <a href="{{request.get_full_path}}&page={{ results.next_page_number }}">next</a>
-            <a href="{{request.get_full_path}}&page={{ results.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
+            <span class="current">
+                <a href="{{request.get_full_path}}&page={{ results.number }}" class="active">{{ results.number }}</a>
+            </span>
+
+            {% if results.has_next %}
+                <a href="{{request.get_full_path}}&page={{ results.next_page_number }}">{{ results.next_page_number }}</a>
+                <a href="{{request.get_full_path}}&page={{ results.paginator.num_pages }}">&raquo;</a>
+            {% endif %}
     </span>
     </div>
     </div>
