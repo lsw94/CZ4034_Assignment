@@ -166,7 +166,7 @@
     <hr>
     {% if duration %}
         <div class="row top-positioning">
-        <small>{{ duration }} seconds</small>
+        <small>{{ results|length }} results in {{ duration|floatformat:3 }} seconds</small>
         </div>
     {% endif %}
     {% if auto_correct != "" %}
