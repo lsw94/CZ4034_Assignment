@@ -73,8 +73,8 @@ def search_string(string):
     if documents_tfidf_dict is None or len(documents_tfidf_dict) == 0:
         document_return = []
         terms_freq = []
-        term_id = found_terms[0].id
         for id in relevent_documents_ids:
+            term_id = found_terms[0].id
             doc = documents.get_document(id)
             terms_freq.append(doc.tfidfs.get_tfidf_norm_of_term_id(term_id))
             document_return.append(doc)
