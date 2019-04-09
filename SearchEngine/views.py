@@ -42,6 +42,7 @@ def result_view(request):
         context = {
             "form": form,
             "filter": filter_form,
+            "total_results": len(results),
             "results": page_results,
             "auto_correct": auto_correct,
             "duration": duration
@@ -73,6 +74,7 @@ def result_view(request):
             "form": form,
             "filter": filter_form,
             "results": page_results,
+            "total_results": len(results),
             "auto_correct": auto_correct,
             "duration": duration
         }

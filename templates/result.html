@@ -21,8 +21,10 @@
                     contentType: false,
                     success: function (data) {
                         let updateDiv = jQuery(data).find('#result_display').children();
+                        let update = jQuery(data).find('#stats').children();
                        // let retainDiv = jqObj.find('#result_display');
                         $('#result_display').html(updateDiv);
+                        $('#stats').html(update);
                     }
                 });
             });
@@ -165,8 +167,8 @@
     </nav>
     <hr>
     {% if duration %}
-        <div class="row top-positioning">
-        <small>{{ results|length }} results in {{ duration|floatformat:3 }} seconds</small>
+        <div class="row top-positioning" id="stats">
+        <small>{{ total_results|length }} results in {{ duration|floatformat:3 }} seconds</small>
         </div>
     {% endif %}
     {% if auto_correct != "" %}
