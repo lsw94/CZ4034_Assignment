@@ -5,28 +5,26 @@
 
 {% block content %}
     <style>
+        .position{
+            text-align: center;
+        }
         .index-searchform {
             position: relative;
-            left: 7%;
-            margin-top: 28%;
-
-        }
-
-        .logo {
-            position: relative;
-            left: 37%;
-            margin-top: -24%;
-
+            width:40%;
         }
 
 
     </style>
 
-    <img src="{% static 'img/logo.png' %}" height="300" width="300" class="logo">
+<div class="position" >
 
-    <form class="index-searchform form-check-inline col-lg-5 col-md-6 " method="get" action={% url 'search' %}>
+    <img src="{% static 'img/logo.png' %}" height="300" width="300">
+<div>
+    <form class="index-searchform form-check-inline" method="get" action={% url 'search' %}>
         {{ form }}
         <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
+    </div>
+</div>
 
 {% endblock %}

@@ -74,6 +74,7 @@
 
         .text-positioning {
             margin-left: 2%;
+            width: 73%;
         }
 
         .image-positioning {
@@ -168,7 +169,7 @@
     <hr>
     {% if duration %}
         <div class="row top-positioning" id="stats">
-        <small>{{ total_results|length }} results in {{ duration|floatformat:3 }} seconds</small>
+        <small>{{ total_results }} results in {{ duration|floatformat:3 }} seconds</small>
         </div>
     {% endif %}
     {% if auto_correct != "" %}
@@ -181,7 +182,7 @@
     <div id="result_display">
         {% for document in results %}
             <div class="row results-positioning">
-                <div class="col-md-1 col-lg-1 image-positioning">
+                <div class="image-positioning">
                     {% if document.image_url %}
                         <img src={{ document.image_url }} height="56" width="100">
 
@@ -189,7 +190,7 @@
                         <img src="{% static 'img/noimg.png' %}" height="56" width="100">
                     {% endif %}
                 </div>
-                <div class="col-md-9 col-lg-9 text-positioning">
+                <div class="text-positioning">
                    <small> Category: {{ document.category }}</small>
                     <br/>
                     <a href={{ document.url }}> {{ document.title }}</a><br/>
