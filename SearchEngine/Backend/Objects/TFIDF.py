@@ -7,9 +7,10 @@ class TFIDF:
         self.tfidfs = []
         self.tfidfs_norm = []
 
-    def add_tidf(self, term_id, term_idf, document_tf):
+    def add_tidf(self, term_id, term_frequency, term_idf):
         self.term_id.append(term_id)
-        self.tfidfs.append(term_idf * document_tf)
+        # self.tfidfs.append(term_idf * term_frequency)
+        self.tfidfs.append(term_frequency)
 
     def apply_normalization(self):
         tfidfnp = np.asarray(self.tfidfs)
