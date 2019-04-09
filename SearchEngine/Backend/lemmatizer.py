@@ -78,15 +78,15 @@ def process_documents(documents):
 
     for term in terms:
         idf = math.log((len(documents) / term.document_frequency), 10)
-        term.set_term_idf(idf)
+        term.set_idf(idf)
     for document in documents:
         tfidfs = TFIDF()
         for term in terms:
             if not term.positional_indexes.is_doc_id_in_list(document.id):
                 continue
             term_position_index = term.get_positional_index_of_doc(document.id)
-            document_tf = 1 + math.log(len(term_position_index), 10)
-            tfidfs.add_tidf(term.id, document_tf, term.idf)
+            term_frequency = 1 + math.log(len(term_position_index), 10)
+            tfidfs.add_tidf(term.id, term_frequency, term.idf)
         tfidfs.apply_normalization()
         document.set_document_tfidfs(tfidfs)
     return terms, documents

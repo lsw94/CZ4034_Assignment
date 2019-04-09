@@ -22,6 +22,6 @@ class Term:
     def get_positional_index_of_doc(self, doc_id):
         return self.positional_indexes.get_positional_index_by_doc_id(doc_id)
 
-    def set_term_idf(self, idf):
+    def set_idf(self, idf):
         self.idf = idf
 
