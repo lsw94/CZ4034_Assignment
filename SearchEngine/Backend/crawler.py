@@ -79,6 +79,7 @@ def query_news(requery):
         if not classified_loaded:
             documents = load_json_list(documents_classified_path)
     else:
+        documents = load_json_list(documents_processed_path)
         documents = categorize_document(documents)
         save_json(jsonpickle.encode(documents), documents_classified_path)
         terms = load_json_list(terms_path)
