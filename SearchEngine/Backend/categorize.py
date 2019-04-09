@@ -170,6 +170,7 @@ def categorize_document(documents):
         doc_id.category = predicted_category[i]
     # for i, title in enumerate(dataset_title):
     #     print(title + " ----- " + predicted_category[i])
+    return documents
 
 
 def calculate_fscore(documents):
@@ -309,5 +310,5 @@ def print_result():
     print("F-Score:")
     print(vals[2])
 
-build_model()
+# build_model()
 # print_result()
