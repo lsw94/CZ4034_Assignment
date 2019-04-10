@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load app_tags %}
 
 
 {% block content %}
@@ -11,8 +12,12 @@
                 $('#filtersForm input:checkbox').each(function () {
                     if ($(this).is(':checked')) {
                         formData.append("filters[]", $.trim($(this).parent().text().toUpperCase()));
+
                     }
                 });
+
+                var checked = JSON.stringify($('#filtersForm').serializeArray());
+                formData.append("form_data[]", checked);
                 $.ajax({
                     url: $(this).attr('action'),
                     type: "POST", // http method
@@ -207,17 +212,17 @@
         <span class="step-links">
 
             {% if results.has_previous %}
-                <a href="{{request.get_full_path}}&page=1"}}>&laquo;</a>
-                <a href="{{request.get_full_path}}&page={{ results.previous_page_number }}">{{ results.previous_page_number }}</a>
+                <a href="?{% url_replace request 'page' '1' %}">&laquo;</a>
+                <a href="?{% url_replace request 'page' results.previous_page_number %}">{{ results.previous_page_number }}</a>
             {% endif %}
 
             <span class="current">
-                <a href="{{request.get_full_path}}&page={{ results.number }}" class="active">{{ results.number }}</a>
+                <a href="?{% url_replace request 'page' results.number %}" class="active">{{ results.number }}</a>
             </span>
 
             {% if results.has_next %}
-                <a href="{{request.get_full_path}}&page={{ results.next_page_number }}">{{ results.next_page_number }}</a>
-                <a href="{{request.get_full_path}}&page={{ results.paginator.num_pages }}">&raquo;</a>
+                <a href="?{% url_replace request 'page' results.next_page_number %}">{{ results.next_page_number }}</a>
+                <a href="?{% url_replace request 'page' results.paginator.num_pages %}">&raquo;</a>
             {% endif %}
     </span>
     </div>
