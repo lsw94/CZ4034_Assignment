@@ -19,7 +19,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.naive_bayes import MultinomialNB
-
+from sklearn.model_selection import GridSearchCV
 
 # import Classification.main as main
 
@@ -123,17 +123,13 @@ def build_model():
     # models.append(("MultinomialNB", MultinomialNB()))
     # models.append(("LogisticRegression", LogisticRegression()))
 
-    # param_grid = [{'C': [1, 10, 100, 1000], 'tol': [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], 'max_iter': [1000, 2000, 3000, 4000, 5000]}]
+    param_grid = [{'C': [1, 10, 100, 1000], 'tol': [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], 'max_iter': [1000, 2000, 3000, 4000, 5000]}]
 
     results = []
     names = []
     times = []
     for name, model in models:
-        # model_act = GridSearchCV(model, param_grid)
-        # model_act.fit(X_train_tfidf, labels_train)
-        # print(model_act.best_score_)
-        # print(model_act.best_params_)
-        # model_act.score(X_test_tfidf, labels_validate)
+        grid_search_model(model, param_grid, X_train_tfidf, labels_train, X_test_tfidf, labels_validate)
         start_time = time.time()
         model.fit(X_train_tfidf, labels_train)
         elapsed_time = time.time() - start_time
@@ -154,6 +150,14 @@ def build_model():
     # Y_predict = logistic_Regression.predict(X_test_tfidf)
     # print(accuracy_score(Y_test, Y_predict))
     # joblib.dump(logistic_Regression, 'saved_model.pkl')
+
+
+def grid_search_model(model,param_grid, X_train_tfidf, labels_train, X_test_tfidf, labels_validate):
+    model_act = GridSearchCV(model, param_grid)
+    model_act.fit(X_train_tfidf, labels_train)
+    print(model_act.best_score_)
+    print(model_act.best_params_)
+    model_act.score(X_test_tfidf, labels_validate)
 
 
 def categorize_document(documents):
